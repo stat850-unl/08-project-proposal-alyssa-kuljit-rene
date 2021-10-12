@@ -1,6 +1,6 @@
 ---
 title: "Stat 850 Project Description"
-author: "Firstname Lastname, Firstname Lastname, ..."
+author: "Alyssa Grube, Kultjit Bhatti, Rene Ingersoll"
 output: github_document
 ---
 
@@ -38,5 +38,7 @@ Provide a link to your dataset here, and a description of the variables in the d
 Describe avenues you might explore using the data. What are your goals? How do you plan to explore the data? You can provide some exploratory plots here if you have them available, otherwise, list what types of things you will be looking for.
 
 ## Group Members
-List all of the project contributors here.
+- Alyssa Grube
+- Kultjit Bhatti
+- Rene Ingersoll
 
