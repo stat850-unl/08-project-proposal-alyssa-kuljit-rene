@@ -34,6 +34,14 @@ Once you have received feedback on your project proposal (via Canvas) you may al
 ## Data Set
 Provide a link to your dataset here, and a description of the variables in the data set.
 
+#Files to use:
+- VariableList.csv 
+    - this includes description of all the variables in the Food          Environment Atlas
+- StateAndCountyData.csv
+    - contains data for each variable by County
+    
+    this is what we will do with it.
+
 ## Potential Topics to Explore Using the Data Set
 Describe avenues you might explore using the data. What are your goals? How do you plan to explore the data? You can provide some exploratory plots here if you have them available, otherwise, list what types of things you will be looking for.
 
