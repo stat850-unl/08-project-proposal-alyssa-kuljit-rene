@@ -43,7 +43,19 @@ Provide a link to your dataset here, and a description of the variables in the d
     this is what we will do with it.
 
 ## Potential Topics to Explore Using the Data Set
-Describe avenues you might explore using the data. What are your goals? How do you plan to explore the data? You can provide some exploratory plots here if you have them available, otherwise, list what types of things you will be looking for.
+Describe avenues you might explore using the data. 
+We might explore rates of diabetes, obesity, and child malnutrition and how these rates correlate to data regarding food availability in the United States, as well as the availability of recreational facilities. 
+
+What are your goals? 
+Our goals are to see if there are any patterns in public health and access to food across various communities (rural, urban, east/west coasts). 
+
+How do you plan to explore the data? 
+We plan to look at averages of the different factors studied in the data sets, as well as selecting a few different states (such as Oregon, New York, Nebraska, Louisiana) featuring urban and rural communities in order to compare public health with food and recreational availability. We also plan to take into account local culture, specifically people's ability and willingness to travel to access recreational facilities and food. 
+
+
+You can provide some exploratory plots here if you have them available, otherwise, list what types of things you will be looking for.
+
+
 
 ## Group Members
 - Alyssa Grube
