@@ -33,6 +33,8 @@ Once you have received feedback on your project proposal (via Canvas) you may al
 
 ## Data Set
 Provide a link to your dataset here, and a description of the variables in the data set.
+https://www.ers.usda.gov/data-products/food-environment-atlas/data-access-and-documentation-downloads/
+The above is the link to the dataset we are using.
 
 #Files to use:
 - VariableList.csv 
