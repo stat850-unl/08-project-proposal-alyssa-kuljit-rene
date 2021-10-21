@@ -49,7 +49,7 @@ Describe avenues you might explore using the data.
 We might explore rates of diabetes, obesity, and child malnutrition and how these rates correlate to data regarding food availability in the United States, as well as the availability of recreational facilities. 
 
 What are your goals? 
-Our goals are to see if there are any patterns in public health and access to food across various communities (rural, urban, east/west coasts). 
+Our goals are to see if there are any patterns in public health and access to food across various communities (rural, urban, east/west coasts). Other exploration we are interested to do is whether there is a negative correlation between the number of recreational facilities and obesity rate or not.
 
 How do you plan to explore the data? 
 We plan to look at averages of the different factors studied in the data sets, as well as selecting a few different states (such as Oregon, New York, Nebraska, Louisiana) featuring urban and rural communities in order to compare public health with food and recreational availability. We also plan to take into account local culture, specifically people's ability and willingness to travel to access recreational facilities and food. 
