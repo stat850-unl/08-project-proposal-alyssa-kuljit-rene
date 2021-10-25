@@ -60,6 +60,8 @@ Recreational Centers: RECFACPTH16
 
 **Note**: the variables listed above are a tentative selection to use in our project, the data is presented with observations from multiple years as well as based on different demographics, therefore, as we explore the data more, our list of variables may change as we explore comparisons between age, ethnicity, difference between years, etc. 
 
+> Make sure you're not drawing (causal) conclusions based on the variables you choose when there are many other potential variables you're ignoring that may be involved here. That is one of the big challenges of working with very real, very messy data like what you've proposed. 
+
 #Files to use:
 1.  VariableList.csv 
   * this includes description of all the variables in the Food Environment Atlas, organizing them by category (Access, Demographics, Health, etc.), the variable code used in the associated files and the units which the data is provided in
