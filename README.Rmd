@@ -58,7 +58,7 @@ Recreational Centers: RECFACPTH16
 
  * the data provides a sum of recreation and fitness facilities within each county 
 
-**Note**: the variables listed above are a tentative selection to use in our project, the data is presented with observations from multiple years as well as based on different demographics, therefore, as we explore the data more, our list of variables may change as we explore comparisons between age, ethnicity, difference between years, etc. 
+**Note**: the variables listed above are a tentative selection to use in our project, the data is presented with observations from multiple years as well as based on different demographics, therefore, as we explore the data more, our list of variables may change as we explore comparisons between age, ethnicity, difference between years, etc. These will be used to determine what additional variables should be explored in order to draw conclusions from the data and observe patterns. 
 
 #Files to use:
 1.  VariableList.csv 
@@ -76,11 +76,11 @@ What are your goals?
 * Our goals are to see if there are any patterns in public health and access to food and the correlation between recreational facilities and obesity across various communities and regions. 
 
 How do you plan to explore the data? 
-* The R programming language will be used in order to filter, sort, and plot the data into interpretative graphs, tables, and maps in order to observe any trends and correlations in these trends. 
+* The R programming language will be used in order to filter, sort, and plot the data into interpretative graphs, tables, and maps in order to observe any trends and correlations in these trends. Exploratory figures will be created in our initial variables we want to explore; these will be used to extrapolate and determine what other variables should be inspected using R programming. 
 
 
 You can provide some exploratory plots here if you have them available, otherwise, list what types of things you will be looking for.
-* We plan to look at the difference in the variables of interest at varying geographic locations in the United States. Also, we are interested if local culture, specifically people's ability and willingness to travel or access recreational facilities and food, plays a part on people's health. Lastly, we are curious if these differences are region specific, such as do they vary from east coast, Midwest, west coast, and rural to urban.
+* We plan to look at the difference in the variables of interest at varying geographic locations in the United States. Also, we are interested if local culture, specifically people's ability and willingness to travel or access recreational facilities and food, plays a part on people's health.  Lastly, we are curious if these differences are region specific, such as do they vary from east coast, Midwest, west coast, and rural to urban.
 
 
 ## Group Members
