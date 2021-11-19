@@ -1,0 +1,29 @@
+---
+title: "Workspace"
+author: "Rene, Alyssa, Kuljit"
+date: "11/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r Kuljit}
+
+```
+
+
+You can also embed plots, for example:
+
+```{r Alyssa}
+
+```
+
+```{r Rene}
+
+```
+
