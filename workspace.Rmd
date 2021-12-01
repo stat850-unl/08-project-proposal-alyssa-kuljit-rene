@@ -25,13 +25,13 @@ RECFAC16-> Count of Rec facilities in 2016
 PCH_RECFAC_11_16-> %change in number of Rec facilities in 2016 from 2011.
 PCTCHGOBESITY-> %Change in obesity between 2012-2017||SELF-CREATED
 
-%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% (code to refer)
 healthdatatest %>% 
     mutate
     region = ifelse(date > as.Date("1954-03-12") & date < as.Date("1958-12-08"), "Westcoast"),
     region = ifelse(date > as.Date("1958-09-13") & date < as.Date("1964-03-08"), "Eastcoast")
   )
-%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% (code to refer)
 healthdatatest %>%
     mutate(region= case_when(
       State="CA"~"West",
@@ -45,6 +45,7 @@ library(patchwork)
 library(ggpubr)
 library(reshape2)
 library(dplyr)
+library(tidyr)
 #might use sample_n() to downscale 'healthdata'
 a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
 b<-aggregate(formula = PCT_OBESE_ADULTS17 ~ State, data = health, FUN = mean)
@@ -59,8 +60,34 @@ healthdatatest<-healthdata
 #mutate worked partially, how to add more states in one statement?
 healthdatatest<-mutate(healthdatatest, region= case_when(
       State=="CA"~"West",
-      State=="DC"~"East"
+      State=="OR"~"West",
+      State=="WA"~"West",
+      State=="WV"~"East",
+      State=="VA"~"East",
+      State=="PA"~"East",
+      State=="DC"~"East",
+      State=="GA"~"East",
+      State=="SC"~"East",
+      State=="NC"~"East",
+      State=="DC"~"East",
+      State=="MD"~"East",
+      State=="DE"~"East",
+      State=="NJ"~"East",
+      State=="NY"~"East",
+      State=="CT"~"East",
+      State=="RI"~"East",
+      State=="MA"~"East",
+      State=="ME"~"East",
+      State=="FL"~"East"
     ))
+eastwest<-healthdatatest
+eastwest<-eastwest[complete.cases(eastwest$region),]
+ew<-ggplot()+
+  geom_point(data=eastwest,aes(x=region, y=RECCHG, colour="red"))+
+  geom_point(data=eastwest,aes(x=region, y=PCTCHGOBESITY, colour="blue"))
+ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
+  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("black", "red"))
+
 #############################################
 
 #IDEA OF PLOTTING PCTCHGOBESITY and RECCHG on y-axis
