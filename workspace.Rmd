@@ -30,6 +30,7 @@ library(ggplot2)
 library(skimr)
 library(patchwork)
 library(ggpubr)
+library(reshape2)
 health<-read.csv("Health2.csv")
 
 a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
@@ -47,7 +48,8 @@ p3 <- ggplot()+
   geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
 p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p4
+p4+labs(title = "%Change in Rec vs Obesity", x = "States", y = "% Change", color = "Legend Title\n") +
+  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("red", "blue"))
 cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
 
 
