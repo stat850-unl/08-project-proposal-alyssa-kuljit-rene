@@ -62,7 +62,8 @@ You can also embed plots, for example:
 
 ```
 
-Testing....
+- Basic analysis of data for variables kuljit looked at
+- Will add some maps for it tonight
 
 
 ```{r Rene}
