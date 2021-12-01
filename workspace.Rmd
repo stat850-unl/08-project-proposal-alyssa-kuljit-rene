@@ -56,6 +56,7 @@ healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OB
 healthdatatest<-healthdata
 
 #############################################
+#mutate worked partially, how to add more states in one statement?
 healthdatatest<-mutate(healthdatatest, region= case_when(
       State=="CA"~"West",
       State=="DC"~"East"
