@@ -140,9 +140,9 @@ summary(health$PCH_RECFAC_11_16)
 #mapping obesity percent 2017
 
 #download shapefile for geometry of map
-#zipfile from census
+#zipfile from census, download and extract data
 f <- tempfile()
-download.file("http://https://www2.census.gov/geo/tiger/TIGER2020/COUNTY/tl_2020_us_county.zip", destfile = f)
+download.file("http://www2.census.gov//geo//tiger//TIGER2020//COUNTY//tl_2020_us_county.zip", destfile = f)
 unzip(f, exdir = ".")
 
 #file added to 
