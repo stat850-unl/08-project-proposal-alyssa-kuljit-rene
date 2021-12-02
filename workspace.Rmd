@@ -12,6 +12,7 @@ library(ggplot2)
 library(skimr)
 library(patchwork)
 library(ggpubr)
+library(sf)
 health<-read.csv("Health2.csv")
 
 ```
@@ -25,20 +26,71 @@ RECFAC16-> Count of Rec facilities in 2016
 PCH_RECFAC_11_16-> %change in number of Rec facilities in 2016 from 2011.
 PCTCHGOBESITY-> %Change in obesity between 2012-2017||SELF-CREATED
 
+%%%%%%%%%%%%%%%% (code to refer)
+healthdatatest %>% 
+    mutate
+    region = ifelse(date > as.Date("1954-03-12") & date < as.Date("1958-12-08"), "Westcoast"),
+    region = ifelse(date > as.Date("1958-09-13") & date < as.Date("1964-03-08"), "Eastcoast")
+  )
+%%%%%%%%%%%%%%%%%% (code to refer)
+healthdatatest %>%
+    mutate(region= case_when(
+      State="CA"~"West",
+      State="DC"~"East"
+    ))
+%%%%%%%%%%%%%%%%%%
 ```{r Kuljit}
 library(ggplot2)
 library(skimr)
 library(patchwork)
 library(ggpubr)
 library(reshape2)
-health<-read.csv("Health2.csv")
-
+library(dplyr)
+library(tidyr)
+#might use sample_n() to downscale 'healthdata'
 a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
 b<-aggregate(formula = PCT_OBESE_ADULTS17 ~ State, data = health, FUN = mean)
 c<-aggregate(formula = PCH_RECFAC_11_16 ~ State, data = health, FUN = mean)
 d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
+d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
 
 healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OBESE_ADULTS12, OBESE17=b$PCT_OBESE_ADULTS17,PCTCHGOBESITY=d$PCTCHG_12_17)
+healthdatatest<-healthdata
+
+#############################################
+#mutate worked partially, how to add more states in one statement?
+healthdatatest<-mutate(healthdatatest, region= case_when(
+      State=="CA"~"West",
+      State=="OR"~"West",
+      State=="WA"~"West",
+      State=="WV"~"East",
+      State=="VA"~"East",
+      State=="PA"~"East",
+      State=="DC"~"East",
+      State=="GA"~"East",
+      State=="SC"~"East",
+      State=="NC"~"East",
+      State=="DC"~"East",
+      State=="MD"~"East",
+      State=="DE"~"East",
+      State=="NJ"~"East",
+      State=="NY"~"East",
+      State=="CT"~"East",
+      State=="RI"~"East",
+      State=="MA"~"East",
+      State=="ME"~"East",
+      State=="FL"~"East"
+    ))
+eastwest<-healthdatatest
+eastwest<-eastwest[complete.cases(eastwest$region),]
+ew<-ggplot()+
+  geom_point(data=eastwest,aes(x=region, y=RECCHG, colour="red"))+
+  geom_point(data=eastwest,aes(x=region, y=PCTCHGOBESITY, colour="blue"))
+ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
+  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("black", "red"))
+
+#############################################
+
 #IDEA OF PLOTTING PCTCHGOBESITY and RECCHG on y-axis
 p1<-ggplot(data=healthdata,aes(x=State,y=PCTCHGOBESITY, color=PCTCHGOBESITY ))+
   geom_point()
@@ -48,7 +100,7 @@ p3 <- ggplot()+
   geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
 p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p4+labs(title = "%Change in Rec vs Obesity", x = "States", y = "% Change", color = "Legend Title\n") +
+p4+labs(title = "%Change in Recreation facilities V/S Obesity", x = "States", y = "% Change", color = "Legend Title\n") +
   scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("red", "blue"))
 cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
 
@@ -62,7 +114,11 @@ You can also embed plots, for example:
 
 ```
 
+<<<<<<< HEAD
 - Basic analysis of data for variables kuljit looked at
+=======
+- Basic analsis of data for variables kuljit looked at
+>>>>>>> 025299b57ef9ae3d92c779f10001c820d9cbbe9b
 - Will add some maps for it tonight
 
 
@@ -72,13 +128,34 @@ skim(health)
 
 head(health)
 
-summary(health$RECFAC16)
+summary(healthdata$PCTCHGOBESITY)
 summary(health$PCT_OBESE_ADULTS12)
-summary(health$PCT_OBESE_ADULTS17)
+summary(health$PCT_OBESE_ADULTS17) #map this
 # higher averages in 2017 then compared to 2012
 
 summary(health$PCH_RECFAC_11_16)
 #some of the data has NA's, how are we handling this?
+#Kuljit: When I use aggregate function to take average of all the county data for the state it takes care of NAs for me.
+
+#mapping obesity percent 2017
+
+#download shapefile for geometry of map
+#zipfile from census
+f <- tempfile()
+download.file("http://https://www2.census.gov/geo/tiger/TIGER2020/COUNTY/tl_2020_us_county.zip", destfile = f)
+unzip(f, exdir = ".")
+
+#file added to 
+US_shape <- read_sf("tl_2020_us_county.shp")
+head(US_shape)
+#settingup a basic map of continential US
+ggplot(data= US_shape)+
+  geom_sf()+
+  coord_sf(xlim = c(-140, -60), ylim = c(25, 50))
+
+#merge geometry to health data by FIPS and GEOID
+#then plot data
+
 
 
 ```
