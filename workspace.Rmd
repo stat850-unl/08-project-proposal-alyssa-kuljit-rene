@@ -13,7 +13,10 @@ library(skimr)
 library(patchwork)
 library(ggpubr)
 library(sf)
+library(dplyr)
+
 health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
 
 ```
 
@@ -114,13 +117,17 @@ You can also embed plots, for example:
 
 ```
 
-<<<<<<< HEAD
-- Basic analysis of data for variables kuljit looked at
-=======
-- Basic analsis of data for variables kuljit looked at
->>>>>>> 025299b57ef9ae3d92c779f10001c820d9cbbe9b
-- Will add some maps for it tonight
+## Mapping Food Atlas data:
 
+Health Data
+- Mapped obesity by state
+- Mapped food access by county
+
+To Do:
+- Correct color scheme so that higher % is darker color
+- Overly state lines onto both maps for better identification
+- identify a high and low obesity state to look at their food access closely, compare urban to rural regions
+- maybe add cities? to help in identifying areas
 
 ```{r Rene}
 #introduction to data
@@ -133,11 +140,9 @@ summary(health$PCT_OBESE_ADULTS12)
 summary(health$PCT_OBESE_ADULTS17) #map this
 # higher averages in 2017 then compared to 2012
 
-summary(health$PCH_RECFAC_11_16)
-#some of the data has NA's, how are we handling this?
-#Kuljit: When I use aggregate function to take average of all the county data for the state it takes care of NAs for me.
+######Creating Maps############
 
-#mapping obesity percent 2017
+#SETTING UP GEOMETRY
 
 #download shapefile for geometry of map
 #zipfile from census, download and extract data
@@ -146,17 +151,55 @@ download.file("http://www2.census.gov//geo//tiger//TIGER2020//COUNTY//tl_2020_us
 unzip(f, exdir = ".")
 
 #file added to 
-US_shape <- read_sf("tl_2020_us_county.shp")
+us_shape <- read_sf("tl_2020_us_county.shp")
 head(US_shape)
-#settingup a basic map of continential US
-ggplot(data= US_shape)+
-  geom_sf()+
-  coord_sf(xlim = c(-140, -60), ylim = c(25, 50))
+#change GEOID to int to match with FIPs for join
+shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
+head(shape_data)
+#check it was changed
+class(shape_data$GEOID)
 
-#merge geometry to health data by FIPS and GEOID
-#then plot data
+###################
+#   HEALTH DATA   #
+###################
+
+#creating a data for the obesity data we are interested in mapping
+obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County = health$County, Pct_Obese_17 =  health$PCT_OBESE_ADULTS17)
+head(obesity_data)
 
 
+#joining geometry to health data by FIPS and GEOID
+obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
+head(obesity_map$geometry) #check data joined correctly
+
+#ploting map of obesity
+ggplot(data= obesity_map)+
+  geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
+  coord_sf(xlim = c(-125, -68), ylim = c(25, 50))+
+  ggtitle("Percent of Obesity 2017")
+
+
+######################
+#  Food Access Data  #
+######################
+
+#interested variable: PCT_LACCESS_POP15
+
+#creating a dataframe for food access data that we are interested in mapping
+head(foodaccess)
+food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County = foodaccess$County, Pct_LowAccess_15 =  foodaccess$PCT_LACCESS_POP15)
+head(food_data)
+
+#joining geometry to health data by FIPS and GEOID
+food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
+head(food_map)
+
+#Plotting map of low food access
+ggplot(data= food_map)+
+  geom_sf(data= food_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+
+  coord_sf(xlim = c(-125, -68), ylim = c(25, 50))+
+  scale_fill_viridis_c(option = "plasma")+
+  ggtitle("Percent of Low Access to Food by County 2015")
 
 ```
 
