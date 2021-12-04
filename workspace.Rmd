@@ -111,9 +111,132 @@ cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "
 ```
 
 
-You can also embed plots, for example:
+Comparing by state number of grocery stores with level of food insecurity/low access to food and population level 
 
 ```{r Alyssa}
+
+library(tidyverse)
+
+library(readxl)
+
+library(plyr)
+
+library(ggplot2)
+
+library(sf)
+
+library(data.table)
+
+#read in data 
+#stores, access, insecurity 
+#overlay number of stores on the states 
+statecounty<-read.csv(file='foodenvatlas/StateAndCountyData.csv')
+supcounty<-read.csv(file='foodenvatlas/SupplementalDataCounty.csv')
+supstate<-read.csv(file='foodenvatlas/SupplementalDataState.csv')
+varlist<-read.csv(file='foodenvatlas/VariableList.csv')
+
+#SOURCE https://rpubs.com/tf_peterson/readxl_import 
+
+fooddata<-read_excel("foodenvatlas/foodenvdata.xls") #read in excel file 
+
+excel_sheets(path="foodenvatlas/foodenvdata.xls") #return sheet names 
+#read in each sheet separately 
+dfaccess<-read_excel("foodenvatlas/foodenvdata.xls",sheet="ACCESS") #can also use sheet number instead of name ; this one is sheet 5 
+
+dfstores<-read_excel("foodenvatlas/foodenvdata.xls", sheet="STORES") #sheet 6 
+
+dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #sheet 9
+
+#food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
+
+#printing data into plots 
+#percent of access in 2015 
+
+#foodaccess<-sf::read_sf(dfaccess)
+
+#ggplot(data=foodaccess)+
+  #geom_sf()
+
+#need to plot pct poverty by county and state ; so need to find a way to automate the process 
+
+
+
+foodaccess<-dfaccess%>% 
+group_by(State) %>% #group by state 
+  summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
+  arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
+  #mutate(dfaccess$LACCESS_POP15)
+
+alphaccess<-foodaccess[order(names(foodaccess))]
+
+pop15<-dfaccess%>%
+  group_by(State)%>%
+  summarise_at(vars(LACCESS_POP15), list(population15=sum))
+
+alphpop15<-pop15[order(names(pop15))] #list in alphabetical order by state for labeling purposes 
+
+#print(pop15)
+
+#print(foodaccess)
+
+foodinsecure<-dfinsecurity %>% 
+  group_by(State) %>% 
+  summarise_at(vars(FOODINSEC_12_14), list(insecure=mean))%>%
+  arrange(desc(insecure))
+
+alphfoodinsecure<-foodinsecure[order(names(foodinsecure))]
+
+#print(foodinsecure) 
+
+
+storeaccess<-dfstores%>%
+  group_by(State) %>% 
+  summarize_at(vars(GROC16), list(number=sum)) %>% 
+    arrange(number) #ascending order is default; modify with desc() 
+
+#need number of grocery stores to be in ascending order by state as fewer stores means less access to food 
+
+
+alphstoreaccess<-storeaccess[order(names(storeaccess))]
+
+#print(storeaccess)
+
+matrixnumber<-matrix(c(storeaccess$number))
+#alphmn<-matrixnumber[order(names(matrixnumber))]
+
+combo<-cbind(alphpop15,alphstoreaccess$number)
+#print(combo)
+
+completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
+print(completepic)
+  
+ggplot(data=foodaccess, aes(x=State,y=access))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
+  theme_classic(base_size = 10)+
+  ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
+  xlab("State")+
+  ylab("Percent of Population with Low Access to Food ")
+  
+ggplot(data=foodinsecure, aes(x=State,y=insecure))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`))+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
+  xlab("State")+
+  ylab("Percent of Population Experiencing Food Insecurity")
+
+#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
+ggplot(data=combo, aes(x=State, y=population15))+
+ # geom_point() + 
+ # geom_text(aes(label=matrixnumber)) +
+  geom_label(aes(label=alphstoreaccess$number), size=2)+
+  #geom_text(size=10)+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
+  xlab("State")+
+  ylab("Population Level in 2015")
+ # geom_text(data=storeaccess, labels=storeaccess$number)
+#need to include geom formatting or it won't know what to do with the info  
+
 
 ```
 
