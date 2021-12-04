@@ -14,7 +14,6 @@ library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
-library(sapply)
 
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
@@ -153,7 +152,6 @@ unzip(f, exdir = ".")
 
 #file added to 
 us_shape <- read_sf("tl_2020_us_county.shp")
-head(US_shape)
 
 #state borders to overlay onto county data
 g <- tempfile()
@@ -161,11 +159,9 @@ download.file("https://www2.census.gov//geo//tiger//TIGER2020//STATE//tl_2020_us
 unzip(g, exdir = ".")
 
 us_state <- read_sf("tl_2020_us_state.shp")
-head(us_state)
 
 #change GEOID to int to match with FIPs for join
 shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
-head(shape_data)
 #check it was changed
 class(shape_data$GEOID)
 
@@ -175,7 +171,6 @@ class(shape_data$GEOID)
 
 #creating a data for the obesity data we are interested in mapping
 obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County = health$County, Pct_Obese_17 =  health$PCT_OBESE_ADULTS17)
-head(obesity_data)
 
 
 #joining geometry to health data by FIPS and GEOID
@@ -201,13 +196,10 @@ ggplot(data= obesity_map)+
 #interested variable: PCT_LACCESS_POP15
 
 #creating a dataframe for food access data that we are interested in mapping
-head(foodaccess)
 food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County = foodaccess$County, Pct_LowAccess_15 =  foodaccess$PCT_LACCESS_POP15)
-head(food_data)
 
 #joining geometry to health data by FIPS and GEOID
 food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
-head(food_map)
 
 #Plotting map of low food access
 
@@ -224,14 +216,20 @@ ggplot(data= food_map)+
 ########################################################
 #  Mapping states to look at Urban vs. Rural
 
+
+pop <- read.csv("Population.csv")
+pop_data <- data.frame(FIPS = pop$FIPS, State = pop$State, County = pop$County, pop_2010 =  pop$X2010_Census_Population)
+
+food_map2 <- left_join(food_map, pop_data, by = c("FIPS" = "FIPS"))
+
 #Identifying the states with the highest and lowest obesity rates
-health %>% slice_max(PCT_OBESE_ADULTS17) #West Virgina
+health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
 health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
 
 #West Virginia Highest Obesity
 wv_map <- subset(food_map, State == "WV")
-head(wv_map)
 wv_state <- subset(us_state, NAME == "West Virginia")
+
 
 ggplot(data= wv_map)+
   geom_sf(data= wv_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
@@ -243,7 +241,7 @@ ggplot(data= wv_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food for West Virginia 2015")
 
-#Comparision to Nebraska
+#Comparison to Nebraska
 ne_map <- subset(food_map, State == "NE")
 ne_state <- subset(us_state, NAME == "Nebraska")
 
