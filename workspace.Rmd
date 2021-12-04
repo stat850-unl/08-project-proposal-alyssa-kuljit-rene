@@ -168,6 +168,8 @@ group_by(State) %>% #group by state
   arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
   #mutate(dfaccess$LACCESS_POP15)
 
+alphaccess<-foodaccess[order(names(foodaccess))]
+
 pop15<-dfaccess%>%
   group_by(State)%>%
   summarise_at(vars(LACCESS_POP15), list(population15=sum))
@@ -206,7 +208,7 @@ matrixnumber<-matrix(c(storeaccess$number))
 combo<-cbind(alphpop15,alphstoreaccess$number)
 #print(combo)
 
-completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number)
+completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
 print(completepic)
   
 ggplot(data=foodaccess, aes(x=State,y=access))+
@@ -234,7 +236,7 @@ ggplot(data=combo, aes(x=State, y=population15))+
   xlab("State")+
   ylab("Population Level in 2015")
  # geom_text(data=storeaccess, labels=storeaccess$number)
-#need to include geom formatting or it won't know what to do with the info 
+#need to include geom formatting or it won't know what to do with the info  
 
 
 ```
