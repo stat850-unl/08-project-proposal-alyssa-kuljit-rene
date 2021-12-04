@@ -112,7 +112,7 @@ cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "
 ```
 
 
-You can also embed plots, for example:
+Comparing by state number of grocery stores with level of food insecurity/low access to food and population level 
 
 ```{r Alyssa}
 
