@@ -118,24 +118,24 @@
 
 %------------------------------------------------------
 %Kuljit's slides ~~~~~~~~~~~~START~~~~~~~~~~~~~~~~~~~~~~~~
- \begin{frame}{Looking at Obesity, Diabetes & Recreation Facilities Data}
-\setbeamertemplate{itemize items}[triangle]
-  \begin{itemize}
-  \item Question 1: What are the general trends of Diabetes?
-  \item Question 2: How is US doing at Obesity?
-  \item Question 3: How does the obesity change in context to the availability of Recreation facilities?
-  \end{itemize}
+\begin{frame}{Looking at Obesity, Diabetes & Recreation Facilities Data}
+  \setbeamertemplate{itemize items}[triangle]
+   \begin{itemize}
+     \item Question 1: What are the general trends of Diabetes?
+     \item Question 2: How is US doing at Obesity?
+     \item Question 3: How does the obesity change in context to the availability of Recreation facilities?
+   \end{itemize}
 \end{frame}
 
 \begin{frame}{General trends of Diabetes (2008-2013)}
-\begin{itemize}
+ \begin{itemize}
   \item Majority of the states got increasing Diabetes problem!
   \item Interesting fact about Washington D.C.
-  \end{itemize}
-\begin{figure}
-   \includegraphics[width=0.5\textwidth]{DiaTrend.png}
-   \hfill
-\end{figure}
+ \end{itemize}
+   \begin{figure}
+    \includegraphics[width=0.5\textwidth]{DiaTrend.png}
+    \hfill
+   \end{figure}
 \end{frame}
 
 \begin{frame}{General trends of Obesity (2012-2017)}
@@ -149,17 +149,17 @@
 \end{frame}
 
 \begin{frame}{Looking at change in Recreation facilities and Obesity on same page}
-\begin{itemize}
-  \item Highlight States:
   \begin{itemize}
-  \item Good: Alaska, Colorado, Nebraska, Illinois, Kentucky, Delaware
-  \item Bad: Washington D.C.
-  \end {itemize}
-\end{itemize}
-\begin{figure}
+   \item Highlight States:
+   \begin{itemize}
+    \item Good: Alaska, Colorado, Nebraska, Illinois, Kentucky, Delaware
+    \item Bad: Washington D.C.
+   \end {itemize}
+  \end{itemize}
+ \begin{figure}
    \includegraphics[width=0.5\textwidth]{ObesityRecPTH.png}
    \hfill
-\end{figure}
+ \end{figure}
 \end{frame}
 
 \begin{frame}{Looking at plots of East Coast & West Coast}
