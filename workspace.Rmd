@@ -250,7 +250,6 @@ To Do:
 - maybe add cities? to help in identifying areas
 
 ```{r Rene}
-
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
 
@@ -287,6 +286,9 @@ shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
 class(shape_data$GEOID)
 
 #Read in shape file for cities
+#file url is not being recognized and file is too large to add to github
+# URL to data : https://catalog.data.gov/dataset/tiger-line-shapefile-2017-2010-nation-u-s-2010-census-urban-area-national
+unzip("tl_2017_us_uac10.zip")
 major_cities <- read_sf("tl_2017_us_uac10.shp")
 major_cities <- separate(major_cities, "NAME10", c("City", "State"), ",")
 
