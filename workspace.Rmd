@@ -89,7 +89,7 @@ ew<-ggplot()+
   geom_point(data=eastwest,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=eastwest,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
 eastwestplot<-ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
-  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("red", "blue"))
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 eastwestplot
 #eastwestplot + aes(x = fct_inorder(region))
 
