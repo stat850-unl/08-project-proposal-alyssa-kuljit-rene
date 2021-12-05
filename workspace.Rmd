@@ -7,13 +7,28 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+<<<<<<< HEAD
+=======
+list.of.packages <- c("ggplot2", "skimr", "patchwork", "ggpubr", "sf", "dplyr", "reshape2", "tidyr", "forcats", "readxl", "tidyverse", "plyr", "data.table")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+>>>>>>> 11c1e0b9a19cf873c501600eb77a17c2679486b3
 library(ggplot2)
 library(skimr)
 library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
+<<<<<<< HEAD
 library(tidyr)
+=======
+library(reshape2)
+library(tidyr)
+library(forcats)
+
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+>>>>>>> 11c1e0b9a19cf873c501600eb77a17c2679486b3
 
 ```
 
@@ -40,26 +55,21 @@ healthdatatest %>%
     ))
 %%%%%%%%%%%%%%%%%%
 ```{r Kuljit}
-library(ggplot2)
-library(skimr)
-library(patchwork)
-library(ggpubr)
-library(reshape2)
-library(dplyr)
-library(tidyr)
-#might use sample_n() to downscale 'healthdata'
+#Libraries defined on top!
+
 a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
 b<-aggregate(formula = PCT_OBESE_ADULTS17 ~ State, data = health, FUN = mean)
 c<-aggregate(formula = PCH_RECFAC_11_16 ~ State, data = health, FUN = mean)
 d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
-d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
+e<-aggregate(formula = PCH_RECFACPTH_11_16 ~ State, data = health, FUN = mean)
+f<-aggregate(formula = PCT_DIABETES_ADULTS08 ~ State, data = health, FUN = mean)
+g<-aggregate(formula = PCT_DIABETES_ADULTS13 ~ State, data = health, FUN = mean)
 
-healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OBESE_ADULTS12, OBESE17=b$PCT_OBESE_ADULTS17,PCTCHGOBESITY=d$PCTCHG_12_17)
-healthdatatest<-healthdata
+healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OBESE_ADULTS12, OBESE17=b$PCT_OBESE_ADULTS17,PCTCHGOBESITY=d$PCTCHG_12_17,PCTCHGRECPTH=e$PCH_RECFACPTH_11_16,Diabetes2008=f$PCT_DIABETES_ADULTS08, Diabetes2013=g$PCT_DIABETES_ADULTS13)
 
 #############################################
-#mutate worked partially, how to add more states in one statement?
-healthdatatest<-mutate(healthdatatest, region= case_when(
+
+healthdata<-mutate(healthdata, region= case_when(
       State=="CA"~"West",
       State=="OR"~"West",
       State=="WA"~"West",
@@ -81,29 +91,40 @@ healthdatatest<-mutate(healthdatatest, region= case_when(
       State=="ME"~"East",
       State=="FL"~"East"
     ))
-eastwest<-healthdatatest
+eastwest<-healthdata
 eastwest<-eastwest[complete.cases(eastwest$region),]
 ew<-ggplot()+
-  geom_point(data=eastwest,aes(x=region, y=RECCHG, colour="red"))+
-  geom_point(data=eastwest,aes(x=region, y=PCTCHGOBESITY, colour="blue"))
-ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
-  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("black", "red"))
+  geom_point(data=eastwest,aes(x=State, y=RECCHG, colour="red"))+
+  geom_point(data=eastwest,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
+eastwestplot<-ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
+  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("red", "blue"))
+eastwestplot
+#eastwestplot + aes(x = fct_inorder(region))
 
 #############################################
 
-#IDEA OF PLOTTING PCTCHGOBESITY and RECCHG on y-axis
-p1<-ggplot(data=healthdata,aes(x=State,y=PCTCHGOBESITY, color=PCTCHGOBESITY ))+
-  geom_point()
-p2<-ggplot(data=healthdata,aes(x=State,y=RECCHG, color=RECCHG ))+
-  geom_point()
-p3 <- ggplot()+
+#Comparing Change in Obesity and Rec facilities
+# p1 & p2 to create plot for % change in total number of rec facilities
+p1 <- ggplot()+
   geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
-p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p4+labs(title = "%Change in Recreation facilities V/S Obesity", x = "States", y = "% Change", color = "Legend Title\n") +
-  scale_color_manual(labels = c("RECCHG", "PCTCHGOBESITY"), values = c("red", "blue"))
-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
+p2<-p1+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 
+# p3 & p4 to create plot for % change in rec facilities per thousand population
+p3 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
+p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
+
+#Correlations
+numberchange<-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
+perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
+
+#General look at diabetes trend 2008 to 2011
 
 ```
 
