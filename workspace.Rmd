@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 list.of.packages <- c("ggplot2", "skimr", "patchwork", "ggpubr", "sf", "dplyr", "reshape2", "tidyr", "forcats", "readxl", "tidyverse", "plyr", "data.table")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -16,12 +17,17 @@ library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
+
+library(tidyr)
 library(reshape2)
 library(tidyr)
 library(forcats)
 
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
+
+
+
 ```
 
 ## R Markdown
