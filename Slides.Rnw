@@ -118,7 +118,7 @@
 
 %------------------------------------------------------
 %Kuljit's slides ~~~~~~~~~~~~START~~~~~~~~~~~~~~~~~~~~~~~~
-\begin{frame}{Looking at Obesity, Diabetes & Recreation Facilities Data}
+\begin{frame}{Looking at Obesity, Diabetes and Recreation Facilities Data}
   \setbeamertemplate{itemize items}[triangle]
    \begin{itemize}
      \item Question 1: What are the general trends of Diabetes?
@@ -140,7 +140,7 @@
 
 \begin{frame}{General trends of Obesity (2012-2017)}
  \begin{itemize}
-   \item Highlight States: ALASKA & CALIFORNIA
+   \item Highlight States: ALASKA and CALIFORNIA
  \end{itemize}
  \begin{figure}
    \includegraphics[width=0.5\textwidth]{ObesityTrend.png}
@@ -162,7 +162,7 @@
  \end{figure}
 \end{frame}
 
-\begin{frame}{Looking at plots of East Coast & West Coast}
+\begin{frame}{Looking at plots of East Coast and West Coast}
   \begin{figure}
    \includegraphics[width=0.5\textwidth]{Eastplot.png}
    \hfill
