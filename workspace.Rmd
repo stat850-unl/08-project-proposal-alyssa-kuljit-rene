@@ -94,14 +94,14 @@ East<-East[complete.cases(East$region),]
 wp<-ggplot()+
   geom_point(data=West,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=West,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
-Westplot<-ew+labs(title = "%Change in Obesity and Rec: Westcoast(2012-2017)", x = "West Coast States", y = "% Change", color = "Legend\n") +
+Westplot<-wp+labs(title = "%Change in Obesity and Rec: Westcoast(2012-2017)", x = "West Coast States", y = "% Change", color = "Legend\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 Westplot
 
 ep<-ggplot()+
   geom_point(data=East,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=East,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
-Eastplot<-ew+labs(title = "%Change in Obesity and Rec: Eastcoast(2012-2017)", x = "East Coast States", y = "% Change", color = "Legend\n") +
+Eastplot<-ep+labs(title = "%Change in Obesity and Rec: Eastcoast(2012-2017)", x = "East Coast States", y = "% Change", color = "Legend\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 Eastplot
 
