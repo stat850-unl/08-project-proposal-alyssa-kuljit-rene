@@ -162,6 +162,14 @@
 \end{figure}
 \end{frame}
 
+\begin{frame}{Looking at plots of East Coast & West Coast}
+  \begin{figure}
+   \includegraphics[width=0.5\textwidth]{Eastplot.png}
+   \hfill
+   \includegraphics[width=0.5\textwidth]{Westplot.png}
+  \end{figure}
+\end{frame}
+
 %Kuljit's slides ~~~~~~~~~~~~~~~~~END~~~~~~~~~~~~~~~~~~~~~~~~
 
 
