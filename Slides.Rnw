@@ -50,7 +50,7 @@
 
  
 
-\title[Comparisons of Health, wellness and food accessibility in the United States]{Comparisons of Health, wellness and food accessibility in the United States}
+\title[Comparisons of Health, Wellness and Food Accessibility in the United States]{Comparisons of Health, Wellness and Food Accessibility in the United States}
 
 \institute[UNL]{University of Nebraska-Lincoln}
 
