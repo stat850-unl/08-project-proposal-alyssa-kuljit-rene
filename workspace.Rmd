@@ -88,7 +88,7 @@ eastwest<-eastwest[complete.cases(eastwest$region),]
 ew<-ggplot()+
   geom_point(data=eastwest,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=eastwest,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
-eastwestplot<-ew+labs(title = "%Change in Obesity and Rec: Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
+eastwestplot<-ew+labs(title = "%Change in Obesity and Rec (2012-2017): Eastcoast V/S Westcoast", x = "Regions", y = "% Change", color = "Legend Title\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 eastwestplot
 #eastwestplot + aes(x = fct_inorder(region))
@@ -101,7 +101,7 @@ p1 <- ggplot()+
   geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
 p2<-p1+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity", x = "States", y = "% Change", color = "Legends\n") +
+p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 
 # p3 & p4 to create plot for % change in rec facilities per thousand population
@@ -109,7 +109,7 @@ p3 <- ggplot()+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="red"))+
   geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
 p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity", x = "States", y = "% Change", color = "Legends\n") +
+p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
 
 #Correlations
@@ -123,8 +123,15 @@ p5 <- ggplot()+
 p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
   scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
-
 #In DC Diabetes decreased !!!
+
+p7 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=OBESE12, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=OBESE17, colour="blue"))
+p8<-p7+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", color = "Legends\n") +
+  scale_color_manual(labels = c("%Obesity2017","%Obesity2012"), values = c("red", "blue"))
+
 ```
 
 
