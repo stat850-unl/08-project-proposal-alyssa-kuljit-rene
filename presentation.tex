@@ -1,0 +1,83 @@
+\documentclass{beamer} %
+
+%%%BASICS
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+%\usepackage{graphicx} 
+\graphicspath{{./Images}}
+
+%%%START THEME SETTINGS
+\usetheme{Dresden}
+\usecolortheme{beaver}
+\usefonttheme{professionalfonts}
+\setbeamertemplate{itemize item}{\color{red}$\blacksquare$}
+%%%END THEME SETTINGS
+
+%%%START APA
+\usepackage[british]{babel}
+\usepackage[backend=biber,style=apa]{biblatex}
+\DeclareLanguageMapping{british}{british-apa}
+\addbibresource{references.bib}
+%% APA citing
+%% \cite{t} - Uthor und Richter, 2010
+%% \textcite{t} - Uthor und Riter (2010)
+%% \parencite{t} - (Uthor & Riter, 2010)
+%% \parencite[Chapt.~4]{t} - (Uthor & Riter, 2010, S. 15)
+%%%END APA
+
+
+\title[Comparison of Health, Wellness, and Food Accessibility in the USA ]{Comparison of Health, Wellness, and Food Accessibility in the USA }
+\institute[UNL]{University of Nebraska-Lincoln}
+\author{Kuljit Bhatti, Alyssa Grube, Rene Ingersoll}
+
+\date{\today}
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	%------------------------------------------------------
+	
+	
+	\begin{frame}{Goals of this Project}
+		\begin{itemize}
+			\item Compare local rates of obesity with access to recreational centers  
+			\item Compare the local rates of food insecurity and low access to food with the number of grocery stores by state  
+			\item goal 3 
+		\end{itemize}
+	\end{frame}
+	
+	
+	\begin{frame}{About the Food Environment Atlas} 
+		\begin{itemize}
+			\item Track store and restaurant proximity, food prices and assistance programs 
+			\item Assembles statistics on food environment indicators 
+			\item Stimulate research on the determinants of food choices and diet quality 
+			\item Provide a spatial overview of a community's ability to access healthy food 
+			\item Track a community's success in accessing healthy food 
+		\end{itemize}
+	\end{frame}
+
+\begin{frame}{Food Access by State Compared to Grocery Store Availability}
+	\includegraphics{grocplot} 
+
+	\end{frame}
+	
+	\begin{frame}{Food Insecurity by State Compared to Grocery Store Availability} 
+		
+		Food insecurity decreases with a greater number of grocery stores. 
+		
+	\end{frame}
+
+\begin{frame}{Comparing State Population Levels with Number of Grocery Stores} 
+	
+	States with higher populations have a greater number of grocery stores. 
+	\end{frame}
+	
+	\begin{frame}{References} 
+	\href{https://www.ers.usda.gov/data-products/food-environment-atlas/go-to-the-atlas/}{Food Environment Atlas }
+\end{frame}
+	
+\end{document}
