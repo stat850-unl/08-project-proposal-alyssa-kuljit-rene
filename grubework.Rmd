@@ -249,7 +249,7 @@ foodaccessplot<-ggplot(data=foodaccess, aes(x=State,y=access))+
   xlab("State")+
   ylab("Percent of Population with Low Access to Food ")
 
-png("foodaccessplot.png")
+jpeg("Images/foodaccessplot.jpg")
 dev.off()
   
 foodinsecureplot<-ggplot(data=foodinsecure, aes(x=State,y=insecure))+
@@ -258,7 +258,7 @@ foodinsecureplot<-ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
   xlab("State")+
   ylab("Percent of Population Experiencing Food Insecurity")
-png("foodinsecureplot.png")
+jpeg("Images/foodinsecureplot.jpg")
 dev.off()
 
 #see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
@@ -271,7 +271,7 @@ grocplot<-ggplot(data=combo, aes(x=State, y=population15))+
   ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
   xlab("State")+
   ylab("Population Level in 2015")
-png("grocplot.png")
+jpeg("Images/grocplot.jpg")
 dev.off()
  # geom_text(data=storeaccess, labels=storeaccess$number)
 #need to include geom formatting or it won't know what to do with the info 
