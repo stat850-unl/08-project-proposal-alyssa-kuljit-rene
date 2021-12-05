@@ -120,14 +120,32 @@
 %Kuljit's slides ~~~~~~~~~~~~START~~~~~~~~~~~~~~~~~~~~~~~~
 \begin{frame}{Looking at Obesity, Diabetes and Recreation Facilities Data}
   \setbeamertemplate{itemize items}[triangle]
+
+    \begin{itemize}
+      \item Question 1: What are the general trends of Diabetes?
+      \item Question 2: How is US doing at Obesity?
+      \item Question 3: How does the obesity change in context to the availability of Recreation facilities?
+    \end{itemize}
+
    \begin{itemize}
      \item Question 1: What are the general trends of Diabetes?
      \item Question 2: How is US doing at Obesity?
      \item Question 3: How does the obesity change in context to the availability of Recreation facilities?
    \end{itemize}
-\end{frame}
 
+\end{frame}
+%-------------------------------------------------------------
 \begin{frame}{General trends of Diabetes (2008-2013)}
+
+  \begin{itemize}
+    \item Majority of the states got increasing Diabetes problem!
+    \item Interesting fact about Washington D.C.
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[width=0.5\textwidth]{DiaTrend.png}
+    \hfill
+  \end{figure}
+
  \begin{itemize}
   \item Majority of the states got increasing Diabetes problem!
   \item Interesting fact about Washington D.C.
@@ -137,8 +155,10 @@
     \hfill
    \end{figure}
 \end{frame}
-
+%---------------------------------------------------------------
 \begin{frame}{General trends of Obesity (2012-2017)}
+  \begin{itemize}
+    \item Highlight States: ALASKA & CALIFORNIA
  \begin{itemize}
    \item Highlight States: ALASKA and CALIFORNIA
  \end{itemize}
@@ -147,7 +167,7 @@
    \hfill
  \end{figure}
 \end{frame}
-
+%------------------------------------------------------------------------------
 \begin{frame}{Looking at change in Recreation facilities and Obesity on same page}
   \begin{itemize}
    \item Highlight States:
@@ -162,6 +182,8 @@
  \end{figure}
 \end{frame}
 
+%------------------------------------------------------------------------
+\begin{frame}{Looking at plots of East Coast & West Coast}
 \begin{frame}{Looking at plots of East Coast and West Coast}
   \begin{figure}
    \includegraphics[width=0.5\textwidth]{Eastplot.png}
