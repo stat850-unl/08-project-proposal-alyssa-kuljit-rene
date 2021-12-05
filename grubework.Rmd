@@ -158,7 +158,7 @@ library(ggplot2)
 library(sf)
 
 library(data.table)
-
+#t
 #read in data 
 #stores, access, insecurity 
 #overlay number of stores on the states 
