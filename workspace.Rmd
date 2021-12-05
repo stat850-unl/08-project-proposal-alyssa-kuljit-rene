@@ -17,6 +17,7 @@ library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
+
 library(tidyr)
 library(reshape2)
 library(tidyr)
@@ -24,6 +25,7 @@ library(forcats)
 
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
+
 
 
 ```
@@ -121,7 +123,14 @@ numberchange<-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson"
 perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
 
 #General look at diabetes trend 2008 to 2011
+p5 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2008, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2013, colour="blue"))
+p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
+  scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
 
+#In DC Diabetes decreased !!!
 ```
 
 
