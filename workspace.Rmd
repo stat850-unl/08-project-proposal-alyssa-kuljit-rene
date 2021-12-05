@@ -7,21 +7,28 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+<<<<<<< HEAD
+=======
 list.of.packages <- c("ggplot2", "skimr", "patchwork", "ggpubr", "sf", "dplyr", "reshape2", "tidyr", "forcats", "readxl", "tidyverse", "plyr", "data.table")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
+>>>>>>> 11c1e0b9a19cf873c501600eb77a17c2679486b3
 library(ggplot2)
 library(skimr)
 library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
+<<<<<<< HEAD
+library(tidyr)
+=======
 library(reshape2)
 library(tidyr)
 library(forcats)
 
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
+>>>>>>> 11c1e0b9a19cf873c501600eb77a17c2679486b3
 
 ```
 
@@ -265,6 +272,9 @@ To Do:
 - maybe add cities? to help in identifying areas
 
 ```{r Rene}
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+
 #introduction to data
 skim(health)
 
@@ -278,45 +288,43 @@ summary(health$PCT_OBESE_ADULTS17) #map this
 ######Creating Maps############
 
 #SETTING UP GEOMETRY
-
-#download shapefile for geometry of map
-#zipfile from census, download and extract data
+#download shape file for geometry of map
+#zip file from census, download and extract data for counties
 f <- tempfile()
 download.file("http://www2.census.gov//geo//tiger//TIGER2020//COUNTY//tl_2020_us_county.zip", destfile = f)
 unzip(f, exdir = ".")
-
 #file added to 
 us_shape <- read_sf("tl_2020_us_county.shp")
-head(US_shape)
 
 #state borders to overlay onto county data
 g <- tempfile()
 download.file("https://www2.census.gov//geo//tiger//TIGER2020//STATE//tl_2020_us_state.zip", destfile = g)
 unzip(g, exdir = ".")
-
 us_state <- read_sf("tl_2020_us_state.shp")
-head(us_state)
 
 #change GEOID to int to match with FIPs for join
 shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
-head(shape_data)
 #check it was changed
 class(shape_data$GEOID)
+
+#Read in shape file for cities
+#file url is not being recognized and file is too large to add to github
+# URL to data : https://catalog.data.gov/dataset/tiger-line-shapefile-2017-2010-nation-u-s-2010-census-urban-area-national
+unzip("tl_2017_us_uac10.zip")
+major_cities <- read_sf("tl_2017_us_uac10.shp")
+major_cities <- separate(major_cities, "NAME10", c("City", "State"), ",")
 
 ###################
 #   HEALTH DATA   #
 ###################
-
 #creating a data for the obesity data we are interested in mapping
 obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County = health$County, Pct_Obese_17 =  health$PCT_OBESE_ADULTS17)
-head(obesity_data)
-
 
 #joining geometry to health data by FIPS and GEOID
 obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
 head(obesity_map$geometry) #check data joined correctly
 
-#ploting map of obesity
+#plotting map of obesity
 ggplot(data= obesity_map)+
   geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
   geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
@@ -331,20 +339,15 @@ ggplot(data= obesity_map)+
 ######################
 #  Food Access Data  #
 ######################
-
 #interested variable: PCT_LACCESS_POP15
+#creating a data frame for food access data that we are interested in mapping
 
-#creating a dataframe for food access data that we are interested in mapping
-head(foodaccess)
 food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County = foodaccess$County, Pct_LowAccess_15 =  foodaccess$PCT_LACCESS_POP15)
-head(food_data)
 
 #joining geometry to health data by FIPS and GEOID
 food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
-head(food_map)
 
 #Plotting map of low food access
-
 ggplot(data= food_map)+
   geom_sf(data= food_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+
   geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
@@ -357,19 +360,20 @@ ggplot(data= food_map)+
 
 ########################################################
 #  Mapping states to look at Urban vs. Rural
+# Identifying the states with the highest and lowest obesity rates
 
-#Identifying the states with the highest and lowest obesity rates
-health %>% slice_max(PCT_OBESE_ADULTS17) #West Virgina
+health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
 health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
 
 #West Virginia Highest Obesity
 wv_map <- subset(food_map, State == "WV")
-head(wv_map)
 wv_state <- subset(us_state, NAME == "West Virginia")
+wv_cities <- subset(major_cities, State == " WV")
 
 ggplot(data= wv_map)+
   geom_sf(data= wv_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
   geom_sf(data = wv_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= wv_cities, aes(geometry = geometry) ,colour = "red") + 
   coord_sf(datum= NA, xlim = c(-82.76, -77.24), ylim = c(37.1, 40.49))+
   labs(fill = "Low Access") +
   scale_fill_gradient(low= "white", high = 'darkblue')+
@@ -377,19 +381,37 @@ ggplot(data= wv_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food for West Virginia 2015")
 
-#Comparision to Nebraska
+#Colorado has Lowest Obesity
+co_map <- subset(food_map, State == "CO")
+co_state <- subset(us_state, NAME == "Colorado")
+co_cities <- subset(major_cities, State == " CO")
+
+ggplot(data= co_map)+
+  geom_sf(data= co_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = co_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= co_cities, aes(geometry = geometry) ,colour = "red") + 
+  coord_sf(datum= NA, xlim = c(-109.2, -101.8), ylim = c(36.8, 41.1))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for Colorado 2015")
+
+
+#Comparison to Nebraska
 ne_map <- subset(food_map, State == "NE")
 ne_state <- subset(us_state, NAME == "Nebraska")
+ne_cities <- subset(major_cities, State == " NE" | State == " NE--IA")
 
 ggplot(data= ne_map)+
   geom_sf(data= ne_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
   geom_sf(data = ne_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= ne_cities, aes(geometry = geometry) ,colour = "red") +
   coord_sf(datum= NA, xlim = c(-104.3, -95.3), ylim = c(39.8, 43.2))+
   labs(fill = "Low Access") +
   scale_fill_gradient(low= "white", high = 'darkblue')+
   theme_bw() +
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food for Nebraska 2015")
-
 ```
 
