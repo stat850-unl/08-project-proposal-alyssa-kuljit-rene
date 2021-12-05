@@ -39,19 +39,6 @@ RECFAC16-> Count of Rec facilities in 2016
 PCH_RECFAC_11_16-> %change in number of Rec facilities in 2016 from 2011.
 PCTCHGOBESITY-> %Change in obesity between 2012-2017||SELF-CREATED
 
-%%%%%%%%%%%%%%%% (code to refer)
-healthdatatest %>% 
-    mutate
-    region = ifelse(date > as.Date("1954-03-12") & date < as.Date("1958-12-08"), "Westcoast"),
-    region = ifelse(date > as.Date("1958-09-13") & date < as.Date("1964-03-08"), "Eastcoast")
-  )
-%%%%%%%%%%%%%%%%%% (code to refer)
-healthdatatest %>%
-    mutate(region= case_when(
-      State="CA"~"West",
-      State="DC"~"East"
-    ))
-%%%%%%%%%%%%%%%%%%
 ```{r Kuljit}
 #Libraries defined on top!
 
