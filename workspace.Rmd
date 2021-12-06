@@ -151,25 +151,6 @@ Comparing by state number of grocery stores with level of food insecurity/low ac
 
 ```{r Alyssa}
 
-library(tidyverse)
-
-library(readxl)
-
-library(plyr)
-
-library(ggplot2)
-
-library(sf)
-
-library(data.table)
-
-#read in data 
-#stores, access, insecurity 
-#overlay number of stores on the states 
-statecounty<-read.csv(file='foodenvatlas/StateAndCountyData.csv')
-supcounty<-read.csv(file='foodenvatlas/SupplementalDataCounty.csv')
-supstate<-read.csv(file='foodenvatlas/SupplementalDataState.csv')
-varlist<-read.csv(file='foodenvatlas/VariableList.csv')
 
 #SOURCE https://rpubs.com/tf_peterson/readxl_import 
 
@@ -246,27 +227,25 @@ combo<-cbind(alphpop15,alphstoreaccess$number)
 completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
 print(completepic)
   
-foodaccessplot<-ggplot(data=foodaccess, aes(x=State,y=access))+
+ggplot(data=foodaccess, aes(x=State,y=access))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
   theme_classic(base_size = 10)+
   ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
   xlab("State")+
   ylab("Percent of Population with Low Access to Food ")
 
-png("foodaccessplot.png")
-dev.off()
+
   
-foodinsecureplot<-ggplot(data=foodinsecure, aes(x=State,y=insecure))+
+ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`))+
   theme_classic(base_size = 10)+
   ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
   xlab("State")+
   ylab("Percent of Population Experiencing Food Insecurity")
-png("foodinsecureplot.png")
-dev.off()
+
 
 #see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
-grocplot<-ggplot(data=combo, aes(x=State, y=population15))+
+ggplot(data=combo, aes(x=State, y=population15))+
  # geom_point() + 
  # geom_text(aes(label=matrixnumber)) +
   geom_label(aes(label=alphstoreaccess$number), size=2)+
@@ -275,8 +254,7 @@ grocplot<-ggplot(data=combo, aes(x=State, y=population15))+
   ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
   xlab("State")+
   ylab("Population Level in 2015")
-png("grocplot.png")
-dev.off()
+
  # geom_text(data=storeaccess, labels=storeaccess$number)
 #need to include geom formatting or it won't know what to do with the info 
 
