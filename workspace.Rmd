@@ -118,8 +118,8 @@ p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity (2
 
 # p3 & p4 to create plot for % change in rec facilities per thousand population
 p3 <- ggplot()+
-  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="red"))+
-  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="blue"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="red"))
 p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
