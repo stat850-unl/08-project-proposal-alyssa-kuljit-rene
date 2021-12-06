@@ -242,6 +242,9 @@ combo<-cbind(alphpop15,alphstoreaccess$number)
 completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
 print(completepic)
   
+
+
+jpeg("Images/foodaccessplot.jpg") 
 foodaccessplot<-ggplot(data=foodaccess, aes(x=State,y=access))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
   theme_classic(base_size = 10)+
@@ -249,7 +252,7 @@ foodaccessplot<-ggplot(data=foodaccess, aes(x=State,y=access))+
   xlab("State")+
   ylab("Percent of Population with Low Access to Food ")
 
-jpeg("Images/foodaccessplot.jpg")
+
 dev.off()
   
 foodinsecureplot<-ggplot(data=foodinsecure, aes(x=State,y=insecure))+
