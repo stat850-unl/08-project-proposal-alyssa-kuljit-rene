@@ -48,6 +48,374 @@ plot(pressure)
 ## Analysis
 
 plots and analysis 
+alyssa 
+```{r Alyssa}
+
+
+#SOURCE https://rpubs.com/tf_peterson/readxl_import 
+
+fooddata<-read_excel("foodenvatlas/foodenvdata.xls") #read in excel file 
+
+excel_sheets(path="foodenvatlas/foodenvdata.xls") #return sheet names 
+#read in each sheet separately 
+dfaccess<-read_excel("foodenvatlas/foodenvdata.xls",sheet="ACCESS") #can also use sheet number instead of name ; this one is sheet 5 
+
+dfstores<-read_excel("foodenvatlas/foodenvdata.xls", sheet="STORES") #sheet 6 
+
+dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #sheet 9
+
+#food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
+
+#printing data into plots 
+#percent of access in 2015 
+
+#foodaccess<-sf::read_sf(dfaccess)
+
+#ggplot(data=foodaccess)+
+  #geom_sf()
+
+#need to plot pct poverty by county and state ; so need to find a way to automate the process 
+
+
+
+foodaccess<-dfaccess%>% 
+group_by(State) %>% #group by state 
+  summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
+  arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
+  #mutate(dfaccess$LACCESS_POP15)
+
+alphaccess<-foodaccess[order(names(foodaccess))]
+
+pop15<-dfaccess%>%
+  group_by(State)%>%
+  summarise_at(vars(LACCESS_POP15), list(population15=sum))
+
+alphpop15<-pop15[order(names(pop15))] #list in alphabetical order by state for labeling purposes 
+
+#print(pop15)
+
+#print(foodaccess)
+
+foodinsecure<-dfinsecurity %>% 
+  group_by(State) %>% 
+  summarise_at(vars(FOODINSEC_12_14), list(insecure=mean))%>%
+  arrange(desc(insecure))
+
+alphfoodinsecure<-foodinsecure[order(names(foodinsecure))]
+
+#print(foodinsecure) 
+
+
+storeaccess<-dfstores%>%
+  group_by(State) %>% 
+  summarize_at(vars(GROC16), list(number=sum)) %>% 
+    arrange(number) #ascending order is default; modify with desc() 
+
+#need number of grocery stores to be in ascending order by state as fewer stores means less access to food 
+
+
+alphstoreaccess<-storeaccess[order(names(storeaccess))]
+
+#print(storeaccess)
+
+matrixnumber<-matrix(c(storeaccess$number))
+#alphmn<-matrixnumber[order(names(matrixnumber))]
+
+combo<-cbind(alphpop15,alphstoreaccess$number)
+#print(combo)
+
+completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
+print(completepic)
+  
+ggplot(data=foodaccess, aes(x=State,y=access))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
+  theme_classic(base_size = 10)+
+  ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
+  xlab("State")+
+  ylab("Percent of Population with Low Access to Food ")
+
+
+  
+ggplot(data=foodinsecure, aes(x=State,y=insecure))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`))+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
+  xlab("State")+
+  ylab("Percent of Population Experiencing Food Insecurity")
+
+
+#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
+ggplot(data=combo, aes(x=State, y=population15))+
+ # geom_point() + 
+ # geom_text(aes(label=matrixnumber)) +
+  geom_label(aes(label=alphstoreaccess$number), size=2)+
+  #geom_text(size=10)+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
+  xlab("State")+
+  ylab("Population Level in 2015")
+
+ # geom_text(data=storeaccess, labels=storeaccess$number)
+#need to include geom formatting or it won't know what to do with the info 
+
+
+```
+
+
+kuljit 
+
+```{r Kuljit}
+#Libraries defined on top!
+
+a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
+b<-aggregate(formula = PCT_OBESE_ADULTS17 ~ State, data = health, FUN = mean)
+c<-aggregate(formula = PCH_RECFAC_11_16 ~ State, data = health, FUN = mean)
+d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
+e<-aggregate(formula = PCH_RECFACPTH_11_16 ~ State, data = health, FUN = mean)
+f<-aggregate(formula = PCT_DIABETES_ADULTS08 ~ State, data = health, FUN = mean)
+g<-aggregate(formula = PCT_DIABETES_ADULTS13 ~ State, data = health, FUN = mean)
+
+healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OBESE_ADULTS12, OBESE17=b$PCT_OBESE_ADULTS17,PCTCHGOBESITY=d$PCTCHG_12_17,PCTCHGRECPTH=e$PCH_RECFACPTH_11_16,Diabetes2008=f$PCT_DIABETES_ADULTS08, Diabetes2013=g$PCT_DIABETES_ADULTS13)
+
+#############################################
+
+healthdataWest<-mutate(healthdata, region= case_when(
+      State=="CA"~"West",
+      State=="OR"~"West",
+      State=="WA"~"West",
+      State=="CO"~"West",
+      State=="NV"~"West",
+      State=="ID"~"West",
+      State=="MT"~"West",
+      State=="WY"~"West"
+     
+    ))
+West<-healthdataWest
+West<-West[complete.cases(West$region),]
+
+healthdataEast<-mutate(healthdata, region= case_when(
+      State=="WV"~"East",
+      State=="VA"~"East",
+      State=="PA"~"East",
+      State=="DC"~"East",
+      State=="GA"~"East",
+      State=="SC"~"East",
+      State=="NC"~"East",
+      State=="DC"~"East",
+      State=="MD"~"East",
+      State=="DE"~"East",
+      State=="NJ"~"East",
+      State=="NY"~"East",
+      State=="CT"~"East",
+      State=="RI"~"East",
+      State=="MA"~"East",
+      State=="ME"~"East",
+      State=="FL"~"East"
+     
+    ))
+East<-healthdataEast
+East<-East[complete.cases(East$region),]
+
+wp<-ggplot()+
+  geom_point(data=West,aes(x=State, y=PCTCHGOBESITY, colour="red"))+
+  geom_point(data=West,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
+Westplot<-wp+labs(title = "%Change in Obesity and Rec: Westcoast(2012-2017)", x = "West Coast States", y = "% Change", color = "Legend\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+Westplot
+
+ep<-ggplot()+
+  geom_point(data=East,aes(x=State, y=PCTCHGOBESITY, colour="red"))+
+  geom_point(data=East,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
+Eastplot<-ep+labs(title = "%Change in Obesity and Rec: Eastcoast(2012-2017)", x = "East Coast States", y = "% Change", color = "Legend\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+Eastplot
+
+#############################################
+
+#Comparing Change in Obesity and Rec facilities
+# p1 & p2 to create plot for % change in total number of rec facilities
+p1 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
+p2<-p1+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+
+# p3 & p4 to create plot for % change in rec facilities per thousand population
+p3 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="blue"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="red"))
+p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
+
+#Correlations
+numberchange<-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
+perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
+
+#General look at diabetes trend 2008 to 2011
+p5 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2008, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2013, colour="blue"))
+p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
+  scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
+#In DC Diabetes decreased !!!
+
+p7 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=OBESE12, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=OBESE17, colour="blue"))
+p8<-p7+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", color = "Legends\n") +
+  scale_color_manual(labels = c("%Obesity2017","%Obesity2012"), values = c("red", "blue"))
+
+```
+
+rene 
+```{r Rene}
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+
+#introduction to data
+skim(health)
+
+head(health)
+
+summary(healthdata$PCTCHGOBESITY)
+summary(health$PCT_OBESE_ADULTS12)
+summary(health$PCT_OBESE_ADULTS17) #map this
+# higher averages in 2017 then compared to 2012
+
+######Creating Maps############
+
+#SETTING UP GEOMETRY
+#download shape file for geometry of map
+#zip file from census, download and extract data for counties
+f <- tempfile()
+download.file("http://www2.census.gov//geo//tiger//TIGER2020//COUNTY//tl_2020_us_county.zip", destfile = f)
+unzip(f, exdir = ".")
+#file added to 
+us_shape <- read_sf("tl_2020_us_county.shp")
+
+#state borders to overlay onto county data
+g <- tempfile()
+download.file("https://www2.census.gov//geo//tiger//TIGER2020//STATE//tl_2020_us_state.zip", destfile = g)
+unzip(g, exdir = ".")
+us_state <- read_sf("tl_2020_us_state.shp")
+
+#change GEOID to int to match with FIPs for join
+shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
+#check it was changed
+class(shape_data$GEOID)
+
+#Read in shape file for cities
+#file url is not being recognized and file is too large to add to github
+# URL to data : https://catalog.data.gov/dataset/tiger-line-shapefile-2017-2010-nation-u-s-2010-census-urban-area-national
+unzip("tl_2017_us_uac10.zip")
+major_cities <- read_sf("tl_2017_us_uac10.shp")
+major_cities <- separate(major_cities, "NAME10", c("City", "State"), ",")
+
+###################
+#   HEALTH DATA   #
+###################
+#creating a data for the obesity data we are interested in mapping
+obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County = health$County, Pct_Obese_17 =  health$PCT_OBESE_ADULTS17)
+
+#joining geometry to health data by FIPS and GEOID
+obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
+head(obesity_map$geometry) #check data joined correctly
+
+#plotting map of obesity
+ggplot(data= obesity_map)+
+  geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
+  geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
+  coord_sf(datum= NA, xlim = c(-125, -68), ylim = c(25, 50))+
+  labs(fill = "Obesity") +
+  scale_fill_gradient(low= "white", high = 'blue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Obesity 2017")
+
+
+######################
+#  Food Access Data  #
+######################
+#interested variable: PCT_LACCESS_POP15
+#creating a data frame for food access data that we are interested in mapping
+
+food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County = foodaccess$County, Pct_LowAccess_15 =  foodaccess$PCT_LACCESS_POP15)
+
+#joining geometry to health data by FIPS and GEOID
+food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
+
+#Plotting map of low food access
+ggplot(data= food_map)+
+  geom_sf(data= food_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+
+  geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
+  coord_sf(datum= NA, xlim = c(-125, -68), ylim = c(25, 50))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'red')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food by County 2015")
+
+########################################################
+#  Mapping states to look at Urban vs. Rural
+# Identifying the states with the highest and lowest obesity rates
+
+health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
+health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
+
+#West Virginia Highest Obesity
+wv_map <- subset(food_map, State == "WV")
+wv_state <- subset(us_state, NAME == "West Virginia")
+wv_cities <- subset(major_cities, State == " WV")
+
+ggplot(data= wv_map)+
+  geom_sf(data= wv_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = wv_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= wv_cities, aes(geometry = geometry) ,colour = "red") + 
+  coord_sf(datum= NA, xlim = c(-82.76, -77.24), ylim = c(37.1, 40.49))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for West Virginia 2015")
+
+#Colorado has Lowest Obesity
+co_map <- subset(food_map, State == "CO")
+co_state <- subset(us_state, NAME == "Colorado")
+co_cities <- subset(major_cities, State == " CO")
+
+ggplot(data= co_map)+
+  geom_sf(data= co_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = co_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= co_cities, aes(geometry = geometry) ,colour = "red") + 
+  coord_sf(datum= NA, xlim = c(-109.2, -101.8), ylim = c(36.8, 41.1))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for Colorado 2015")
+
+
+#Comparison to Nebraska
+ne_map <- subset(food_map, State == "NE")
+ne_state <- subset(us_state, NAME == "Nebraska")
+ne_cities <- subset(major_cities, State == " NE" | State == " NE--IA")
+
+ggplot(data= ne_map)+
+  geom_sf(data= ne_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = ne_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= ne_cities, aes(geometry = geometry) ,colour = "red") +
+  coord_sf(datum= NA, xlim = c(-104.3, -95.3), ylim = c(39.8, 43.2))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for Nebraska 2015")
+```
+
 
 ##Conclusion 
 
