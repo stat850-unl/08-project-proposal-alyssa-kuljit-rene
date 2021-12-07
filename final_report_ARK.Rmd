@@ -7,9 +7,27 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+list.of.packages <- c("ggplot2", "skimr", "patchwork", "ggpubr", "sf", "dplyr", "reshape2", "tidyr", "forcats", "readxl", "tidyverse", "plyr", "data.table")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+library(ggplot2)
+library(skimr)
+library(patchwork)
+library(ggpubr)
+library(sf)
+library(dplyr)
+
+library(tidyr)
+library(reshape2)
+library(tidyr)
+library(forcats)
+
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+
 ```
 
-## R Markdown
+## Introduction
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
@@ -19,7 +37,7 @@ When you click the **Knit** button a document will be generated that includes bo
 summary(cars)
 ```
 
-## Including Plots
+## Materials and Methods
 
 You can also embed plots, for example:
 
@@ -28,3 +46,9 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Analysis 
+
+##Conclusion 
+
+## References 
