@@ -309,11 +309,14 @@ shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
 #check it was changed
 class(shape_data$GEOID)
 
-#Read in shape file for cities
-#file url is not being recognized and file is too large to add to github
+# Read in shape file for cities
+# major_cities <- read_sf("tl_2017_us_uac10.shp") - Original dataset
+# file url is not being recognized and file is too large to add to github
 # URL to data : https://catalog.data.gov/dataset/tiger-line-shapefile-2017-2010-nation-u-s-2010-census-urban-area-national
-unzip("tl_2017_us_uac10.zip")
-major_cities <- read_sf("tl_2017_us_uac10.shp")
+# I adjusted the data in QGIS to make smaller and added that file to github so could could run
+
+
+major_cities <- read_sf("Major_Cities/Major_Cities.shp")
 major_cities <- separate(major_cities, "NAME10", c("City", "State"), ",")
 
 ###################
