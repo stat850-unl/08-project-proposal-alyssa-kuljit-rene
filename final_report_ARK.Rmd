@@ -1,11 +1,9 @@
 ---
 title: "Final Report ARK"
-author: "Alyssa Grube"
+author: 'Alyssa Grube, Kuljit Bhatti, Rene Ingersoll '
 date: "12/6/2021"
 output:
-  word_document: default
   html_document: default
-  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +31,7 @@ foodaccess <- read.csv("FoodAccess.csv")
 
 ## Introduction
 
-intro 
+# intro 
 
 ```{r intro, include=FALSE}
 #any code for into
