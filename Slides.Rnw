@@ -58,7 +58,7 @@
 
 \institute[UNL]{University of Nebraska-Lincoln}
 
-\author{Alyssa Grube, Kuljit Bhatti, Rene Ingersoll}
+\author{Rene Ingersoll, Kuljit Bhatti, Alyssa Grube}
 
  
 
@@ -77,76 +77,7 @@
 
 \end{frame}
 
-
-%------------------------Alyssa-----------------------------
-
-\begin{frame}{Goals of This Project}
-  \setbeamertemplate{itemize items}[triangle]
-    \begin{itemize}
-      \item Compare local rates of obesity with access to recreational centers
-      \item Compare the local rates of food insecurity and low access to food with the number of grocery stores by state
-    \end{itemize}
-\end{frame}
-
-%---------------------------------------------------------------
-
-\begin{frame}{About the Food Environment Atlas}
-  \begin{itemize}
-    \item Track store and restaurant proximity, food prices, and assistance programs
-    \item Assemble statistics on food environment indicators
-    \item Stimulate research on the determinants of food choices and diet quality
-    \item Provide a spatial overview of a community's ability to access healthy food
-    \item Track a community's success in accessing healthy food
-  \end{itemize}
-\end{frame}
-
-%--------------------------------------------------------------
-
-\begin{frame}{Food Access vs. Grocery Store Availability by State}
- \begin{itemize}
-  \item Fewer grocery stores by state result in lower rates of food access
- \end{itemize}
- \begin{figure}
-   \includegraphics[width=0.8\textwidth]{LowAccessStores2015.jpg}
-   \hfill
- \end{figure}
-\end{frame}
-
-  
-%-------------------------------------------------------------
-
-\begin{frame}{Comparision of Food Insecurity to Grocery Store Availability}
- \begin{itemize}
-  \item Fewer grocery stores by state result in lower rates of food insecurity
- \end{itemize}
- \begin{figure}
-   \includegraphics[width=0.8\textwidth]{FoodInsecure2017.jpg}
-   \hfill
- \end{figure}
-\end{frame}
-
-%-------------------------------------------------------------
-
-\begin{frame}{Comparing State Population to Grocery Stores}
- \begin{itemize}
-  \item Higher populations correlate with a greater number of grocery stores
- \end{itemize}
- \begin{figure}
-   \includegraphics[width=0.8\textwidth]{StorePop2015.jpg}
-   \hfill
- \end{figure}
-\end{frame}
-
-
-%---------------------------------------------------------------
-
-\begin{frame}{Drawing Conclusions}
-  \begin{itemize}
-    \item States with high rates of food insecurity correlate with low rates of food access
-    \item These states correlate with lower numbers of grocery stores available to the local population
-  \end{itemize}
-\end{frame}
-
+ 
 
 %-----------------------Kuljit-------------------------------
 
@@ -290,15 +221,6 @@
 \includegraphics{NE_Map.jpg}
 \end{frame}
  
-%----------------------------------------------------------
-
-\begin{frame}{Resources}
-  \setbeamertemplate{itemize items}[triangle]
-    \begin{itemize}
-      \item Food Atlas: https://www.ers.usda.gov/data-products/food-environment-atlas/data-access-and-documentation-downloads/
-      \item US Census Bureau: tiger line files
-    \end{itemize}
-\end{frame}
 
 \printbibliography
 
