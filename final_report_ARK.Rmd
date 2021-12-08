@@ -41,7 +41,6 @@ intro
 
 ## Materials and Methods
 
-For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city.
 
 To construct our maps, we made use of the packages ggplot2 and sf. The ggplot2 package allowed for the different spatial scales to be easily overlaid and plotted with other helpful addition such as title, scale, and color of scale to be easily adjusted. To actually read in and map the geometry of the data we used the sf package, which stands for spatial features. The geometry for states and counties was gathered from the US Census Bureau tiger-line files and read in with the sf package. The data for the urban areas was gathered from Data.gov, which complies datasets from the US Census Bureau for other uses and interpretations. 
 
@@ -332,6 +331,8 @@ obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County 
 obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
 head(obesity_map$geometry) #check data joined correctly
 ```
+
+For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city.
 
 When comparing obesity to low access to food, it was difficult to see a clear correlation due to the differences in scales. Despite the health data being distributed by county, the percent obese had the same value for all counties in the state. When looking at the Percent of Obesity 2017 map, there appears to be a cluster of high obesity rates in the southern part of the country with Arkansas, Louisiana, Alabama, and Mississippi, which have roughly 34% or more obesity. There are lower rates in the west, but one outlier seems to be Colorado with a very low percentage of obesity with only about 22% of the population. Colorado is a population destination for outdoor recreational activities such as hiking, biking, and skiing, which might be one factor contributing to their lower obesity rate. 
 
