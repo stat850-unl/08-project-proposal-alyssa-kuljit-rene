@@ -49,7 +49,7 @@ plot(pressure)
 
 plots and analysis 
 alyssa 
-```{r Alyssa}
+```{r Alyssa, echo=F}
 
 
 #SOURCE https://rpubs.com/tf_peterson/readxl_import 
