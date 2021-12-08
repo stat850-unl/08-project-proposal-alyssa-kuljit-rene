@@ -16,7 +16,8 @@ library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
-
+library(readxl)
+library(plyr)
 library(tidyr)
 library(reshape2)
 library(tidyr)
@@ -29,26 +30,28 @@ foodaccess <- read.csv("FoodAccess.csv")
 
 ## Introduction
 
-intro 
+# intro 
 
-```{r cars}
-summary(cars)
+```{r intro, include=FALSE}
+#any code for into
 ```
 
 ## Materials and Methods
 
-about the code 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+To construct our maps, we made use of the packages ggplot2 and sf. The ggplot2 package allowed for the different spatial scales to be easily overlaid and plotted with other helpful addition such as title, scale, and color of scale to be easily adjusted. To actually read in and map the geometry of the data we used the sf package, which stands for spatial features. The geometry for states and counties was gathered from the US Census Bureau tiger-line files and read in with the sf package. The data for the urban areas was gathered from Data.gov, which complies datasets from the US Census Bureau for other uses and interpretations. 
+
+
+```{r methods, include=FALSE}
+#any code fore methods
 ```
 
 
 
 ## Analysis
 
-plots and analysis 
-alyssa 
+
+# alyssa 
 ```{r Alyssa, echo=F}
 
 
@@ -162,7 +165,7 @@ ggplot(data=combo, aes(x=State, y=population15))+
 ```
 
 
-kuljit 
+# kuljit 
 
 ```{r Kuljit}
 #Libraries defined on top!
@@ -271,8 +274,7 @@ p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", co
 
 ```
 
-rene 
-```{r Rene}
+```{r Rene, include=FALSE}
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
 
@@ -324,7 +326,13 @@ obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County 
 #joining geometry to health data by FIPS and GEOID
 obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
 head(obesity_map$geometry) #check data joined correctly
+```
 
+For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city.
+
+When comparing obesity to low access to food, it was difficult to see a clear correlation due to the differences in scales. Despite the health data being distributed by county, the percent obese had the same value for all counties in the state. When looking at the Percent of Obesity 2017 map, there appears to be a cluster of high obesity rates in the southern part of the country with Arkansas, Louisiana, Alabama, and Mississippi, which have roughly 34% or more obesity. There are lower rates in the west, but one outlier seems to be Colorado with a very low percentage of obesity with only about 22% of the population. Colorado is a population destination for outdoor recreational activities such as hiking, biking, and skiing, which might be one factor contributing to their lower obesity rate. 
+
+```{r obesity_map, echo=FALSE}
 #plotting map of obesity
 ggplot(data= obesity_map)+
   geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
@@ -336,7 +344,11 @@ ggplot(data= obesity_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Obesity 2017")
 
+```
 
+The Percent of Low Access to Food is plotted on a county scale. The scale of the data has a full range of 0 to 100 and it appears that the areas with the highest populations with low access to food are found in the middle of the country from North Dakota down to Texas. When comparing higher rates of obesity, represented in darker hue of blue, to low access to food, we would assume that areas with a lighter hue would have easier access to food and therefore, a more likelihood of being obese. Although, the spatial scales are different, we can see that the food access data is lower towards the east, meaning that there would be a higher percent of accessibility. This then coincides with the obesity data being higher, particularly in the southeast, but also generally in the eastern part of the state.
+
+```{r foodaccess_data, include=FALSE}
 ######################
 #  Food Access Data  #
 ######################
@@ -347,6 +359,9 @@ food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County
 
 #joining geometry to health data by FIPS and GEOID
 food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
+```
+
+```{r foodaccess_map, echo=FALSE}
 
 #Plotting map of low food access
 ggplot(data= food_map)+
@@ -359,6 +374,11 @@ ggplot(data= food_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food by County 2015")
 
+```
+
+Next, we wanted to look at the data based on the effect urban areas had on it. We chose to compare the states with the highest and lowest percent of obesity, which was West Virginia and Colorado respectively. Looking first at West Virginia, the scale of the data represented on the map only extends to 50%, meaning that this is the highest value for the percent of population with low access to food for the state, compared to the map of the continental U.S. which reached to 100%. Despite this difference in scale there does appear to be some patterns of higher percentage of populations with low access to food being away from the urban centers denoted in red. Comparing this to Colorado’s map, it is easier to see the same patterns, in that the areas with more than 75% of low access are away from the urban centers. There may be other factors, not represented in the data, leading these patterns to exist, such as the majority of these area in these counties being national parks and therefore have limited access to resources or inconsistent populations.
+
+```{r identifying_states, include=FALSE}
 ########################################################
 #  Mapping states to look at Urban vs. Rural
 # Identifying the states with the highest and lowest obesity rates
@@ -366,6 +386,9 @@ ggplot(data= food_map)+
 health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
 health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
 
+```
+
+```{r urban_maps, echo=FALSE}
 #West Virginia Highest Obesity
 wv_map <- subset(food_map, State == "WV")
 wv_state <- subset(us_state, NAME == "West Virginia")
@@ -398,7 +421,11 @@ ggplot(data= co_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food for Colorado 2015")
 
+```
 
+To look at the patterns of low access to food being correlated with rural areas, we wanted to take a look a one other state that we would be more familiar with, Nebraska. Most people how live in Nebraska or have visited the state are well aware that the majority of the population is on the far eastern side, focused within Lincoln and Omaha, with a few smaller cities like Grand Island, Kearney, and North Platte sprinkled along the Platte River, and the rest of the population scattered about the state in very small communities. Looking at the red urban centers it is clear to see this illustration. Lincoln and Omaha stand out due to the area of the cluster polygon, and centers with at least 2,500 people are spread throughout the rest of the state. The counties with a high percentage of population with low access to food are clearly situated away from the urban centers, throughout the sandhills of central Nebraska with some other counties also being very north or very south of the state. 
+
+```{r nebraska_map, echo=FALSE}
 #Comparison to Nebraska
 ne_map <- subset(food_map, State == "NE")
 ne_state <- subset(us_state, NAME == "Nebraska")
@@ -417,10 +444,10 @@ ggplot(data= ne_map)+
 ```
 
 
-##Conclusion 
+## Conclusion 
 
-conclusion 
+In conclusion, based how the data was represented in the maps, there does appear to be a correlation between percent of the population with low access to food being in regions that are more rural and away from the urban centers. Also, when comparing obesity to food access, the areas with a higher rate of obesity were more directed to the eastern part of the country, which matched the areas showing a lower percentage of low access to food. Therefore, the east has an easier access to food and which is possibly contributing to their higher obesity.
 
 ## References 
 
-list of references
+1) US Census Bureau. Census.gov, December 8, 2021. https://www.census.gov/. 
