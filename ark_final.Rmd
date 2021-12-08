@@ -1,30 +1,457 @@
 ---
-title: "Stat850 Final Project"
-author: "Alyssa Grube"
-date: "12/8/2021"
-output: html_document
+title: "Stat850 Final Report "
+author: 'Alyssa Grube, Kuljit Bhatti, Rene Ingersoll '
+date: "12/6/2021"
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+list.of.packages <- c("ggplot2", "skimr", "patchwork", "ggpubr", "sf", "dplyr", "reshape2", "tidyr", "forcats", "readxl", "tidyverse", "plyr", "data.table")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+library(ggplot2)
+library(skimr)
+library(patchwork)
+library(ggpubr)
+library(sf)
+library(dplyr)
+library(readxl)
+library(plyr)
+library(tidyr)
+library(reshape2)
+library(tidyr)
+library(forcats)
+
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# intro 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r intro, include=FALSE}
+#any code for into
 ```
 
-## Including Plots
+## Materials and Methods
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+To construct our maps, we made use of the packages ggplot2 and sf. The ggplot2 package allowed for the different spatial scales to be easily overlaid and plotted with other helpful addition such as title, scale, and color of scale to be easily adjusted. To actually read in and map the geometry of the data we used the sf package, which stands for spatial features. The geometry for states and counties was gathered from the US Census Bureau tiger-line files and read in with the sf package. The data for the urban areas was gathered from Data.gov, which complies datasets from the US Census Bureau for other uses and interpretations. 
+
+
+```{r methods, include=FALSE}
+#any code fore methods
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## Analysis
+
+<<<<<<< HEAD
+plots and analysis 
+alyssa 
+```{r Alyssa, echo=F}
+
+
+
+#SOURCE https://rpubs.com/tf_peterson/readxl_import 
+
+fooddata<-read_excel("foodenvatlas/foodenvdata.xls") #read in excel file 
+
+excel_sheets(path="foodenvatlas/foodenvdata.xls") #return sheet names 
+#read in each sheet separately 
+dfaccess<-read_excel("foodenvatlas/foodenvdata.xls",sheet="ACCESS") #can also use sheet number instead of name ; this one is sheet 5 
+
+dfstores<-read_excel("foodenvatlas/foodenvdata.xls", sheet="STORES") #sheet 6 
+
+dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #sheet 9
+
+#food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
+
+#printing data into plots 
+#percent of access in 2015 
+
+#foodaccess<-sf::read_sf(dfaccess)
+
+#ggplot(data=foodaccess)+
+  #geom_sf()
+
+#need to plot pct poverty by county and state ; so need to find a way to automate the process 
+
+
+
+foodaccess<-dfaccess%>% 
+group_by(State) %>% #group by state 
+  summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
+  arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
+  #mutate(dfaccess$LACCESS_POP15)
+
+alphaccess<-foodaccess[order(names(foodaccess))]
+
+pop15<-dfaccess%>%
+  group_by(State)%>%
+  summarise_at(vars(LACCESS_POP15), list(population15=sum))
+
+alphpop15<-pop15[order(names(pop15))] #list in alphabetical order by state for labeling purposes 
+
+#print(pop15)
+
+#print(foodaccess)
+
+foodinsecure<-dfinsecurity %>% 
+  group_by(State) %>% 
+  summarise_at(vars(FOODINSEC_12_14), list(insecure=mean))%>%
+  arrange(desc(insecure))
+
+alphfoodinsecure<-foodinsecure[order(names(foodinsecure))]
+
+#print(foodinsecure) 
+
+
+storeaccess<-dfstores%>%
+  group_by(State) %>% 
+  summarize_at(vars(GROC16), list(number=sum)) %>% 
+    arrange(number) #ascending order is default; modify with desc() 
+
+#need number of grocery stores to be in ascending order by state as fewer stores means less access to food 
+
+
+alphstoreaccess<-storeaccess[order(names(storeaccess))]
+
+#print(storeaccess)
+
+matrixnumber<-matrix(c(storeaccess$number))
+#alphmn<-matrixnumber[order(names(matrixnumber))]
+
+combo<-cbind(alphpop15,alphstoreaccess$number)
+#print(combo)
+
+completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
+print(completepic)
+  
+ggplot(data=foodaccess, aes(x=State,y=access))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
+  theme_classic(base_size = 10)+
+  ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
+  xlab("State")+
+  ylab("Percent of Population with Low Access to Food ")
+
+
+  
+ggplot(data=foodinsecure, aes(x=State,y=insecure))+
+  geom_label(aes(label=completepic$`alphstoreaccess$number`))+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
+  xlab("State")+
+  ylab("Percent of Population Experiencing Food Insecurity")
+
+
+#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
+ggplot(data=combo, aes(x=State, y=population15))+
+ # geom_point() + 
+ # geom_text(aes(label=matrixnumber)) +
+  geom_label(aes(label=alphstoreaccess$number), size=2)+
+  #geom_text(size=10)+
+  theme_classic(base_size = 10)+
+  ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
+  xlab("State")+
+  ylab("Population Level in 2015")
+
+ # geom_text(data=storeaccess, labels=storeaccess$number)
+#need to include geom formatting or it won't know what to do with the info 
+
+
+```
+
+
+# kuljit 
+
+```{r Kuljit, include=FALSE}
+#Libraries defined on top!
+
+a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
+b<-aggregate(formula = PCT_OBESE_ADULTS17 ~ State, data = health, FUN = mean)
+c<-aggregate(formula = PCH_RECFAC_11_16 ~ State, data = health, FUN = mean)
+d<-aggregate(formula = PCTCHG_12_17 ~ State, data = health, FUN = mean)
+e<-aggregate(formula = PCH_RECFACPTH_11_16 ~ State, data = health, FUN = mean)
+f<-aggregate(formula = PCT_DIABETES_ADULTS08 ~ State, data = health, FUN = mean)
+g<-aggregate(formula = PCT_DIABETES_ADULTS13 ~ State, data = health, FUN = mean)
+
+healthdata<- data.frame(State=c$State,RECCHG=c$PCH_RECFAC_11_16,OBESE12=a$PCT_OBESE_ADULTS12, OBESE17=b$PCT_OBESE_ADULTS17,PCTCHGOBESITY=d$PCTCHG_12_17,PCTCHGRECPTH=e$PCH_RECFACPTH_11_16,Diabetes2008=f$PCT_DIABETES_ADULTS08, Diabetes2013=g$PCT_DIABETES_ADULTS13)
+
+#############################################
+
+healthdataWest<-mutate(healthdata, region= case_when(
+      State=="CA"~"West",
+      State=="OR"~"West",
+      State=="WA"~"West",
+      State=="CO"~"West",
+      State=="NV"~"West",
+      State=="ID"~"West",
+      State=="MT"~"West",
+      State=="WY"~"West"
+     
+    ))
+West<-healthdataWest
+West<-West[complete.cases(West$region),]
+
+healthdataEast<-mutate(healthdata, region= case_when(
+      State=="WV"~"East",
+      State=="VA"~"East",
+      State=="PA"~"East",
+      State=="DC"~"East",
+      State=="GA"~"East",
+      State=="SC"~"East",
+      State=="NC"~"East",
+      State=="DC"~"East",
+      State=="MD"~"East",
+      State=="DE"~"East",
+      State=="NJ"~"East",
+      State=="NY"~"East",
+      State=="CT"~"East",
+      State=="RI"~"East",
+      State=="MA"~"East",
+      State=="ME"~"East",
+      State=="FL"~"East"
+     
+    ))
+East<-healthdataEast
+East<-East[complete.cases(East$region),]
+
+wp<-ggplot()+
+  geom_point(data=West,aes(x=State, y=PCTCHGOBESITY, colour="red"))+
+  geom_point(data=West,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
+Westplot<-wp+labs(title = "%Change in Obesity and Rec: Westcoast(2012-2017)", x = "West Coast States", y = "% Change", color = "Legend\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+Westplot
+
+ep<-ggplot()+
+  geom_point(data=East,aes(x=State, y=PCTCHGOBESITY, colour="red"))+
+  geom_point(data=East,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
+Eastplot<-ep+labs(title = "%Change in Obesity and Rec: Eastcoast(2012-2017)", x = "East Coast States", y = "% Change", color = "Legend\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+Eastplot
+
+#############################################
+
+#Comparing Change in Obesity and Rec facilities
+# p1 & p2 to create plot for % change in total number of rec facilities
+p1 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
+p2<-p1+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
+
+# p3 & p4 to create plot for % change in rec facilities per thousand population
+p3 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="blue"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="red"))
+p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
+
+#Correlations
+numberchange<-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
+perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
+
+#General look at diabetes trend 2008 to 2011
+p5 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2008, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2013, colour="blue"))
+p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
+  scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
+#In DC Diabetes decreased !!!
+
+p7 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=OBESE12, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=OBESE17, colour="blue"))
+p8<-p7+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", color = "Legends\n") +
+  scale_color_manual(labels = c("%Obesity2017","%Obesity2012"), values = c("red", "blue"))
+
+```
+
+
+```{r Rene, include=FALSE}
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
+
+#introduction to data
+skim(health)
+
+head(health)
+
+summary(healthdata$PCTCHGOBESITY)
+summary(health$PCT_OBESE_ADULTS12)
+summary(health$PCT_OBESE_ADULTS17) #map this
+# higher averages in 2017 then compared to 2012
+
+######Creating Maps############
+
+#SETTING UP GEOMETRY
+#download shape file for geometry of map
+#zip file from census, download and extract data for counties
+f <- tempfile()
+download.file("http://www2.census.gov//geo//tiger//TIGER2020//COUNTY//tl_2020_us_county.zip", destfile = f)
+unzip(f, exdir = ".")
+#file added to 
+us_shape <- read_sf("tl_2020_us_county.shp")
+
+#state borders to overlay onto county data
+g <- tempfile()
+download.file("https://www2.census.gov//geo//tiger//TIGER2020//STATE//tl_2020_us_state.zip", destfile = g)
+unzip(g, exdir = ".")
+us_state <- read_sf("tl_2020_us_state.shp")
+
+#change GEOID to int to match with FIPs for join
+shape_data <- transform(us_shape, GEOID = as.numeric(GEOID))
+#check it was changed
+class(shape_data$GEOID)
+
+#Read in shape file for cities
+#file url is not being recognized and file is too large to add to github
+# URL to data : https://catalog.data.gov/dataset/tiger-line-shapefile-2017-2010-nation-u-s-2010-census-urban-area-national
+unzip("tl_2017_us_uac10.zip")
+major_cities <- read_sf("tl_2017_us_uac10.shp")
+major_cities <- separate(major_cities, "NAME10", c("City", "State"), ",")
+
+###################
+#   HEALTH DATA   #
+###################
+#creating a data for the obesity data we are interested in mapping
+obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County = health$County, Pct_Obese_17 =  health$PCT_OBESE_ADULTS17)
+
+#joining geometry to health data by FIPS and GEOID
+obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
+head(obesity_map$geometry) #check data joined correctly
+```
+
+For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city.
+
+When comparing obesity to low access to food, it was difficult to see a clear correlation due to the differences in scales. Despite the health data being distributed by county, the percent obese had the same value for all counties in the state. When looking at the Percent of Obesity 2017 map, there appears to be a cluster of high obesity rates in the southern part of the country with Arkansas, Louisiana, Alabama, and Mississippi, which have roughly 34% or more obesity. There are lower rates in the west, but one outlier seems to be Colorado with a very low percentage of obesity with only about 22% of the population. Colorado is a population destination for outdoor recreational activities such as hiking, biking, and skiing, which might be one factor contributing to their lower obesity rate. 
+
+```{r obesity_map, echo=FALSE}
+#plotting map of obesity
+ggplot(data= obesity_map)+
+  geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
+  geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
+  coord_sf(datum= NA, xlim = c(-125, -68), ylim = c(25, 50))+
+  labs(fill = "Obesity") +
+  scale_fill_gradient(low= "white", high = 'blue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Obesity 2017")
+
+```
+
+The Percent of Low Access to Food is plotted on a county scale. The scale of the data has a full range of 0 to 100 and it appears that the areas with the highest populations with low access to food are found in the middle of the country from North Dakota down to Texas. When comparing higher rates of obesity, represented in darker hue of blue, to low access to food, we would assume that areas with a lighter hue would have easier access to food and therefore, a more likelihood of being obese. Although, the spatial scales are different, we can see that the food access data is lower towards the east, meaning that there would be a higher percent of accessibility. This then coincides with the obesity data being higher, particularly in the southeast, but also generally in the eastern part of the state.
+
+```{r foodaccess_data, include=FALSE}
+######################
+#  Food Access Data  #
+######################
+#interested variable: PCT_LACCESS_POP15
+#creating a data frame for food access data that we are interested in mapping
+
+food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County = foodaccess$County, Pct_LowAccess_15 =  foodaccess$PCT_LACCESS_POP15)
+
+#joining geometry to health data by FIPS and GEOID
+food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
+```
+
+```{r foodaccess_map, echo=FALSE}
+
+#Plotting map of low food access
+ggplot(data= food_map)+
+  geom_sf(data= food_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+
+  geom_sf(data = us_state, fill = NA, color = "black", size = 0.25)+
+  coord_sf(datum= NA, xlim = c(-125, -68), ylim = c(25, 50))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'red')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food by County 2015")
+
+```
+
+Next, we wanted to look at the data based on the effect urban areas had on it. We chose to compare the states with the highest and lowest percent of obesity, which was West Virginia and Colorado respectively. Looking first at West Virginia, the scale of the data represented on the map only extends to 50%, meaning that this is the highest value for the percent of population with low access to food for the state, compared to the map of the continental U.S. which reached to 100%. Despite this difference in scale there does appear to be some patterns of higher percentage of populations with low access to food being away from the urban centers denoted in red. Comparing this to Colorado’s map, it is easier to see the same patterns, in that the areas with more than 75% of low access are away from the urban centers. There may be other factors, not represented in the data, leading these patterns to exist, such as the majority of these area in these counties being national parks and therefore have limited access to resources or inconsistent populations.
+
+```{r identifying_states, include=FALSE}
+########################################################
+#  Mapping states to look at Urban vs. Rural
+# Identifying the states with the highest and lowest obesity rates
+
+health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
+health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
+
+```
+
+```{r urban_maps, echo=FALSE}
+#West Virginia Highest Obesity
+wv_map <- subset(food_map, State == "WV")
+wv_state <- subset(us_state, NAME == "West Virginia")
+wv_cities <- subset(major_cities, State == " WV")
+
+ggplot(data= wv_map)+
+  geom_sf(data= wv_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = wv_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= wv_cities, aes(geometry = geometry) ,colour = "red") + 
+  coord_sf(datum= NA, xlim = c(-82.76, -77.24), ylim = c(37.1, 40.49))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for West Virginia 2015")
+
+#Colorado has Lowest Obesity
+co_map <- subset(food_map, State == "CO")
+co_state <- subset(us_state, NAME == "Colorado")
+co_cities <- subset(major_cities, State == " CO")
+
+ggplot(data= co_map)+
+  geom_sf(data= co_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = co_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= co_cities, aes(geometry = geometry) ,colour = "red") + 
+  coord_sf(datum= NA, xlim = c(-109.2, -101.8), ylim = c(36.8, 41.1))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for Colorado 2015")
+
+```
+
+To look at the patterns of low access to food being correlated with rural areas, we wanted to take a look a one other state that we would be more familiar with, Nebraska. Most people how live in Nebraska or have visited the state are well aware that the majority of the population is on the far eastern side, focused within Lincoln and Omaha, with a few smaller cities like Grand Island, Kearney, and North Platte sprinkled along the Platte River, and the rest of the population scattered about the state in very small communities. Looking at the red urban centers it is clear to see this illustration. Lincoln and Omaha stand out due to the area of the cluster polygon, and centers with at least 2,500 people are spread throughout the rest of the state. The counties with a high percentage of population with low access to food are clearly situated away from the urban centers, throughout the sandhills of central Nebraska with some other counties also being very north or very south of the state. 
+
+```{r nebraska_map, echo=FALSE}
+#Comparison to Nebraska
+ne_map <- subset(food_map, State == "NE")
+ne_state <- subset(us_state, NAME == "Nebraska")
+ne_cities <- subset(major_cities, State == " NE" | State == " NE--IA")
+
+ggplot(data= ne_map)+
+  geom_sf(data= ne_map, mapping= aes(geometry = geometry, fill = Pct_LowAccess_15), color = NA)+  
+  geom_sf(data = ne_state, fill = NA, color = "black", size = 0.25)+
+  geom_sf(data= ne_cities, aes(geometry = geometry) ,colour = "red") +
+  coord_sf(datum= NA, xlim = c(-104.3, -95.3), ylim = c(39.8, 43.2))+
+  labs(fill = "Low Access") +
+  scale_fill_gradient(low= "white", high = 'darkblue')+
+  theme_bw() +
+  theme(panel.border = element_blank())+
+  ggtitle("Percent of Low Access to Food for Nebraska 2015")
+```
+
+
+## Conclusion 
+
+In conclusion, based how the data was represented in the maps, there does appear to be a correlation between percent of the population with low access to food being in regions that are more rural and away from the urban centers. Also, when comparing obesity to food access, the areas with a higher rate of obesity were more directed to the eastern part of the country, which matched the areas showing a lower percentage of low access to food. Therefore, the east has an easier access to food and which is possibly contributing to their higher obesity.  
+
+## References 
+
+list of references
