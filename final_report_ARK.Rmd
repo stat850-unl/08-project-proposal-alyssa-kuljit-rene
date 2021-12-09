@@ -62,7 +62,8 @@ The Food Environment Atlas (FEA) was consulted to observe trends in the availabi
 
 ## Materials and Methods
 
-
+The dataset 'Food Environment Atlas' was downloaded from this [site](https://www.ers.usda.gov/data-products/food-environment-atlas/data-access-and-documentation-downloads/). Furthermore, different categories of interest in this dataset was divided among team members to analyze.
+The data was available for all the counties in USA and it was observed that in majority of the states, all the different counties had same value of observations for the diabetes, obesity and recreation facilities. This is why for the creation of plots to explore Diabetes & Obesity trends, Comparison of %Change in recreational facilities and %Change in obesity, mean of all the observations of the counties of a state was used to represent the respective state. After this, obesity and recreation facilities data was also separated according to east coast and west coast regions. This region was added into another column which was created using 'mutate' function of 'dplyr' package.
 To construct our maps, we made use of the packages ggplot2 and sf. The ggplot2 package allowed for the different spatial scales to be easily overlaid and plotted with other helpful addition such as title, scale, and color of scale to be easily adjusted. To actually read in and map the geometry of the data we used the sf package, which stands for spatial features. The geometry for states and counties was gathered from the US Census Bureau tiger-line files and read in with the sf package. The data for the urban areas was gathered from Data.gov, which complies data sets from the US Census Bureau for other uses and interpretations. 
 
 
@@ -503,6 +504,7 @@ ggplot(data= ne_map)+
 ## Conclusion 
 
 In conclusion, from comparing the data collected on the rates of food insecurity, percentage of state populations experiencing low food access, the number of grocery stores available to local populations, and state population levels, it seems there is a clear correlation if not relationship between these factors. When local populations have fewer grocery stores available, this means they have less access to healthy food. This access is reflected in the high rates of low food access and food insecurity. Based on the data that was represented in the maps, there does appear to be a correlation between percent of the population with low access to food being in regions that are more rural and away from the urban centers. Also, when comparing obesity to food access, the areas with a higher rate of obesity were more directed to the eastern part of the country, which matched the areas showing a lower percentage of low access to food. Therefore, the east has an easier access to food and which is possibly contributing to their higher obesity.
+For the analysis of %Change in obesity (2012-2017) and %Change in recreational facilities available per thousand people in the same time period it was observed in plot that the states having high increase in Recreation facilities available to public had less increase in %change in obesity. This was also supported by the correlation factor calculated that came out to be negative as expected.
 
 ## References 
 1) “Food Environment Atlas.” USDA ERS - Food Environment Atlas. U.S. Department of Agriculture. https://www.ers.usda.gov/data-products/food-environment-atlas/. 
