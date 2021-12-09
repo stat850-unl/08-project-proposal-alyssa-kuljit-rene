@@ -1,8 +1,10 @@
 ---
 title: "Final Report ARK"
-author: "Alyssa Grube"
+author: 'Alyssa Grube, Kuljit Bhatti, Rene Ingersoll'
 date: "12/6/2021"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +18,8 @@ library(patchwork)
 library(ggpubr)
 library(sf)
 library(dplyr)
-
+library(readxl)
+library(plyr)
 library(tidyr)
 library(reshape2)
 library(tidyr)
@@ -25,32 +28,12 @@ library(forcats)
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
 
-```
+health<-read.csv("Health2.csv")
+foodaccess <- read.csv("FoodAccess.csv")
 
-## Introduction
-
-intro 
-
-```{r cars}
-summary(cars)
-```
-
-## Materials and Methods
-
-about the code 
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-
-
-## Analysis
-
-plots and analysis 
-alyssa 
-```{r Alyssa, echo=F}
-
+#read in data 
+#stores, access, insecurity 
+#overlay number of stores on the states 
 
 #SOURCE https://rpubs.com/tf_peterson/readxl_import 
 
@@ -66,25 +49,40 @@ dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #she
 
 #food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
 
-#printing data into plots 
-#percent of access in 2015 
-
-#foodaccess<-sf::read_sf(dfaccess)
-
-#ggplot(data=foodaccess)+
-  #geom_sf()
-
-#need to plot pct poverty by county and state ; so need to find a way to automate the process 
 
 
+#printing data into plots
 
+```
+
+## Introduction 
+
+The Food Environment Atlas (FEA) was consulted to observe trends in the availability of food available to local communities. This is an online database that was formed and is updated with the goal of stimulating statistical research on food environment indicators. Specifically, the FEA studies local community's success at accessing healthy food by assembling spatial data on restaurant and grocery store proximity as well as local food assistance programs. 
+
+For the second part of the project, we chose to work on the data available on Health in the original data set we found on the specified official government website. The health part of the data had information from US Census 2012-2017 for obesity and availability of recreational facilities and 2008-2013 for diabetes from all the counties of the USA. To simplify the data exploration and analysis process, the mean was taken for the county data to represent their respective state. The data of 3143 observations was shortened to 51 observations and then used for further processing. 
+
+There were several questions that came to mind during exploration. Starting with what the general trend of Diabetes over the years 2008-2013 looks like? Was US able to control the increasing obesity problem? Ideally, if more recreational facilities are available to the public, they might be using these facilities more often which then might help reduce obesity or other health problems. So, I wanted to look at how reality is over the ideal condition. Whether there is a negative correlation between the recreational facilities available per thousand people and the % change in obesity as there ideally should be if more people use such facilities. The last one was to compare the East Coast and the West Coast region states to see if one region is doing better than the other? 
+
+For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city. 
+
+## Materials and Methods
+
+The dataset 'Food Environment Atlas' was downloaded from this [site](https://www.ers.usda.gov/data-products/food-environment-atlas/data-access-and-documentation-downloads/). Furthermore, different categories of interest in this dataset was divided among team members to analyze.
+The data was available for all the counties in USA and it was observed that in majority of the states, all the different counties had same value of observations for the diabetes, obesity and recreation facilities. This is why for the creation of plots to explore Diabetes & Obesity trends, Comparison of %Change in recreational facilities and %Change in obesity, mean of all the observations of the counties of a state was used to represent the respective state. After this, obesity and recreation facilities data was also separated according to east coast and west coast regions. This region was added into another column which was created using 'mutate' function of 'dplyr' package.
+
+To construct our maps, we made use of the packages ggplot2 and sf. The ggplot2 package allowed for the different spatial scales to be easily overlaid and plotted with other helpful addition such as title, scale, and color of scale to be easily adjusted. To actually read in and map the geometry of the data we used the sf package, which stands for spatial features. The geometry for states and counties was gathered from the US Census Bureau tiger-line files and read in with the sf package. The data for the urban areas was gathered from Data.gov, which complies data sets from the US Census Bureau for other uses and interpretations. 
+We used the package readxl in order to read in data stored in excel spreadsheets and turn it into dataframes that could be utilized in R programming. The package plyr was used in order to reorganize the data into select dataframes for easier comparison and analysis. The tidyverse package was used in order to clean up the data for better analysis.  
+
+
+## Analysis
+
+
+```{r, echo=F, include=F}
 foodaccess<-dfaccess%>% 
 group_by(State) %>% #group by state 
   summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
   arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
   #mutate(dfaccess$LACCESS_POP15)
-
-alphaccess<-foodaccess[order(names(foodaccess))]
 
 pop15<-dfaccess%>%
   group_by(State)%>%
@@ -92,9 +90,9 @@ pop15<-dfaccess%>%
 
 alphpop15<-pop15[order(names(pop15))] #list in alphabetical order by state for labeling purposes 
 
-#print(pop15)
+print(pop15)
 
-#print(foodaccess)
+print(foodaccess)
 
 foodinsecure<-dfinsecurity %>% 
   group_by(State) %>% 
@@ -103,7 +101,7 @@ foodinsecure<-dfinsecurity %>%
 
 alphfoodinsecure<-foodinsecure[order(names(foodinsecure))]
 
-#print(foodinsecure) 
+print(foodinsecure) 
 
 
 storeaccess<-dfstores%>%
@@ -116,17 +114,30 @@ storeaccess<-dfstores%>%
 
 alphstoreaccess<-storeaccess[order(names(storeaccess))]
 
-#print(storeaccess)
+print(storeaccess)
 
 matrixnumber<-matrix(c(storeaccess$number))
 #alphmn<-matrixnumber[order(names(matrixnumber))]
 
 combo<-cbind(alphpop15,alphstoreaccess$number)
-#print(combo)
+print(combo)
+
+alphaccess<-foodaccess[order(names(foodaccess))]
 
 completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
 print(completepic)
   
+
+
+
+```
+
+Grocery store proximity by state was first compared with the percent of the population with low access to healthy food, then to the percent of the population experiencing food insecurity, and finally compared to population levels in each state. 
+
+The below graph compares the number of grocery stores in each state to the percentage of the population with low access to healthy food. 
+
+```{r, echo=F, warning=F}
+
 ggplot(data=foodaccess, aes(x=State,y=access))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
   theme_classic(base_size = 10)+
@@ -134,8 +145,14 @@ ggplot(data=foodaccess, aes(x=State,y=access))+
   xlab("State")+
   ylab("Percent of Population with Low Access to Food ")
 
+```
 
-  
+States with a higher percentage of the population with low access to healthy food have lower numbers of grocery stores within their state borders. 
+
+This is a trend matched when comparing the number of grocery stores to the percentage of the state population experiencing food insecurity. The below graph depicts this relationship
+
+```{r, echo=F, warning=F}   
+
 ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`))+
   theme_classic(base_size = 10)+
@@ -143,8 +160,14 @@ ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   xlab("State")+
   ylab("Percent of Population Experiencing Food Insecurity")
 
+```
 
-#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
+Higher rates of food insecurity are associated with lower numbers of available grocery stores. 
+
+The last comparison with the number of grocery stores in each state compared to the number of people living in those states. The below graph shows this relationship. 
+
+```{r, echo=F, warning=F}
+
 ggplot(data=combo, aes(x=State, y=population15))+
  # geom_point() + 
  # geom_text(aes(label=matrixnumber)) +
@@ -155,16 +178,41 @@ ggplot(data=combo, aes(x=State, y=population15))+
   xlab("State")+
   ylab("Population Level in 2015")
 
- # geom_text(data=storeaccess, labels=storeaccess$number)
-#need to include geom formatting or it won't know what to do with the info 
-
 
 ```
 
 
-kuljit 
+States with higher populations generally have a greater number of grocery stores. 
 
-```{r Kuljit}
+In order to create a more direct comparison of the relationship between state population levels and the number of grocery stores with the levels of food access and insecurity, tables with the five highest and lowest access to food were made as a comparison. 
+
+First, a table of the five states with the highest percentage of low access to food was created, shown below. 
+
+```{r, echo=F, warning=F}
+names(completepic)[1]<-'Population' 
+names(completepic)[3]<-'Insecure' 
+names(completepic)[4]<-'Stores' 
+names(completepic)[5]<-'Low Access' 
+high<-completepic[1:4, 1:5] 
+low<-completepic[35:39,1:5]
+print(high)
+
+```
+
+These states have a not inconsiderable population level and the lowest numbers of available grocery stores. When observing their rates of low food access and insecurity, they have the highest rates for both. 
+
+Lastly, a table of the five states with the lowest percentage of low access to food was created, shown below. 
+
+```{r, echo=F}
+print(low)
+```
+
+These states have higher population levels, but also have the most grocery stores available to local populations. These numbers also correlate with much lower rates of food insecurity and low food access. 
+
+For the second part of the project, we chose to work on the data available on Health in the original data set we found on specified official government website. The health part of the data had information from US Census 2012-2017 for obesity and availability of recreational facilities and 2008-2013 for diabetes from from all the counties of USA. To simplify the data exploration and analysis process, mean was taken for the county data to represent their respective state. Ultimately the data of 3143 observations was shortened to 51 observations and then used for further processing.
+
+
+```{r Kuljit, include=FALSE}
 #Libraries defined on top!
 
 a<-aggregate(formula = PCT_OBESE_ADULTS12 ~ State, data = health, FUN = mean)
@@ -215,7 +263,62 @@ healthdataEast<-mutate(healthdata, region= case_when(
     ))
 East<-healthdataEast
 East<-East[complete.cases(East$region),]
+```
 
+In an attempt to find answer to the question about what the trend is for Diabetes over the 2008-2013 time period, %Population diabetic in 2008 and 2013 were plotted on Y-axis against the States on X-axis. It is observed that in majority of the states got increasing Diabetes problem. While Washington DC seems to be having improved health condition as %Population affected by diabetes actually decreased in 2013. In general this overall plot indicates that the health condition of the public of The United States is deteriorating.
+
+``` {r Diabetes trend, echo=FALSE}
+#General look at diabetes trend 2008 to 2011
+p5 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2008, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=Diabetes2013, colour="blue"))
+p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
+  scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
+#In DC Diabetes decreased !!!
+```
+
+Looking at the obesity data, all the states are observed to have increase in %obesity over the time period of 2012-2017.
+This shows that again in 2017 in all states of US, people are getting unhealthier/obese and there are rising no. of publications which shows the obesity might lead to diabetes which is even more serious problem [Chobot, A.et al (2018)]. So there might be increase in diabetes as well in future because of high %Obesity. This exploartion helps us understanding where the health conditions of the people of US headed.
+
+```{r Obesity trend, echo=FALSE}
+p7 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=OBESE12, colour="red"))+
+  geom_point(data=healthdata,aes(x=State, y=OBESE17, colour="blue"))
+p8<-p7+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", color = "Legends\n") +
+  scale_color_manual(labels = c("%Obesity2017","%Obesity2012"), values = c("red", "blue"))
+
+```
+
+Most interesting exploration I was able to do was to explore the %Change in Obesity in context to the %Change in recreational facilities available per thousand people. In original data set obesity data was available for 2012 and 2017. So %Change from 2012 to 2017 was calculated in a different column so that it can be plotted with %Change in recreational facilities available per thousand people with the states on X-axis.
+
+In this plot, more red dots in the bottom part shows that in majority of the states the number of recreational facilities available actually decreased, and this was seen with greater %change in obesity in majority. Highlights are the states like California, Washington D.C., North Hampshire which got higher %change in recreational facilities and seems to be doing good at controlling the %change in obesity over 2012-2017.
+
+```{r Rec available/Obesity, echo=FALSE}
+#############################################
+
+#Comparing Change in Obesity and Rec facilities
+
+# p3 & p4 to create plot for % change in rec facilities per thousand population
+p3 <- ggplot()+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="blue"))+
+  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="red"))
+p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
+  scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
+```
+
+The nature of the plot above was confirmed  to have a negative correlation between the %Change in obesity and recreational facilities. Which shows that with the increase in the %Change in Recreational facilities, %Obesity appears to be decreasing.
+
+```{r Correlations, echo=FALSE}
+#Correlations
+perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
+```
+
+After all this exploration was the curiosity to compare the east coast region to the west coast region and to find if one region is doing better than the other or not. In original dataset, there was no information about the region of the state so a separate column was created to define the region of the state using mutate function of dplyr package. After this two plots were created, one with East coast states on the X axis and both %Change in obesity and recreational facilities on Y-axis.
+
+```{r EastWest_map, echo=FALSE}
 wp<-ggplot()+
   geom_point(data=West,aes(x=State, y=PCTCHGOBESITY, colour="red"))+
   geom_point(data=West,aes(x=State, y=PCTCHGRECPTH, colour="blue"))
@@ -229,50 +332,11 @@ ep<-ggplot()+
 Eastplot<-ep+labs(title = "%Change in Obesity and Rec: Eastcoast(2012-2017)", x = "East Coast States", y = "% Change", color = "Legend\n") +
   scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
 Eastplot
-
-#############################################
-
-#Comparing Change in Obesity and Rec facilities
-# p1 & p2 to create plot for % change in total number of rec facilities
-p1 <- ggplot()+
-  geom_point(data=healthdata,aes(x=State, y=RECCHG, colour="red"))+
-  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="blue"))
-p2<-p1+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p2+labs(title = "%Change in Total number of Recreation facilities V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
-  scale_color_manual(labels = c("%Change in Rec Facilities", "%Change in Obesity"), values = c("red", "blue"))
-
-# p3 & p4 to create plot for % change in rec facilities per thousand population
-p3 <- ggplot()+
-  geom_point(data=healthdata,aes(x=State, y=PCTCHGRECPTH, colour="blue"))+
-  geom_point(data=healthdata,aes(x=State, y=PCTCHGOBESITY, colour="red"))
-p4<-p3+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p4+labs(title = "%Change in Recreation Facilities Per Thousand Population V/S Obesity (2012-2017)", x = "States", y = "% Change", color = "Legends\n") +
-  scale_color_manual(labels = c("%Change in Rec Facilities/Thousand", "%Change in Obesity"), values = c("red", "blue"))
-
-#Correlations
-numberchange<-cor(healthdata$PCTCHGOBESITY,healthdata$RECCHG, method=c("pearson", "kendall", "spearman"))
-perthchange<-cor(healthdata$PCTCHGOBESITY,healthdata$PCTCHGRECPTH, method=c("pearson", "kendall", "spearman"))
-
-#General look at diabetes trend 2008 to 2011
-p5 <- ggplot()+
-  geom_point(data=healthdata,aes(x=State, y=Diabetes2008, colour="red"))+
-  geom_point(data=healthdata,aes(x=State, y=Diabetes2013, colour="blue"))
-p6<-p5+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p6+labs(title = "Trend in Diabetes (2008-2013)", x = "States", y = "%Diabetes", color = "Legends\n") +
-  scale_color_manual(labels = c("%Diabetes2013","%Diabetes2008"), values = c("red", "blue"))
-#In DC Diabetes decreased !!!
-
-p7 <- ggplot()+
-  geom_point(data=healthdata,aes(x=State, y=OBESE12, colour="red"))+
-  geom_point(data=healthdata,aes(x=State, y=OBESE17, colour="blue"))
-p8<-p7+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
-p8+labs(title = "Trend in Obesity (2012-2017)", x = "States", y = "%Obesity", color = "Legends\n") +
-  scale_color_manual(labels = c("%Obesity2017","%Obesity2012"), values = c("red", "blue"))
-
 ```
 
-rene 
-```{r Rene}
+In both the east coast and west coast region plots, both of the region seems to be doing similar to each other. both regions got some states that are doing great at increasing recreational facilities available per person which seems to be helping in controlling the spread of obesity.For example California, Nevada are the better doing states in the west coast region while on east coast, Washington D.C. is one such example.
+
+```{r Rene, include=FALSE}
 health<-read.csv("Health2.csv")
 foodaccess <- read.csv("FoodAccess.csv")
 
@@ -324,7 +388,13 @@ obesity_data <- data.frame(FIPS = health$ï..FIPS, State = health$State, County 
 #joining geometry to health data by FIPS and GEOID
 obesity_map <- left_join(obesity_data, shape_data, by = c("FIPS" = "GEOID"))
 head(obesity_map$geometry) #check data joined correctly
+```
 
+For the last section we wanted to combine the two sections previously discussed on food availability and health to compare the data spatially. To accomplish this task, we mapped the data of the continental United States for the variables pertaining to percent of the population that is obesity and the percent of the population that has low access to food. We wanted to understand if there was a correlation between these variables and to see if they were affected by if the region was urban or rural. The US Census Bureau defines urban centers as either an urban area that has 50,000 or more people, typically referred to as a metropolitan area, or an urban cluster that has a least 2,500 people and is referred to as a city.
+
+When comparing obesity to low access to food, it was difficult to see a clear correlation due to the differences in scales. Despite the health data being distributed by county, the percent obese had the same value for all counties in the state. When looking at the Percent of Obesity 2017 map, there appears to be a cluster of high obesity rates in the southern part of the country with Arkansas, Louisiana, Alabama, and Mississippi, which have roughly 34% or more obesity. There are lower rates in the west, but one outlier seems to be Colorado with a very low percentage of obesity with only about 22% of the population. Colorado is a population destination for outdoor recreational activities such as hiking, biking, and skiing, which might be one factor contributing to their lower obesity rate. 
+
+```{r obesity_map, echo=FALSE}
 #plotting map of obesity
 ggplot(data= obesity_map)+
   geom_sf(data= obesity_map, mapping= aes(geometry = geometry, fill = Pct_Obese_17), color = NA)+
@@ -336,7 +406,11 @@ ggplot(data= obesity_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Obesity 2017")
 
+```
 
+The Percent of Low Access to Food is plotted on a county scale. The scale of the data has a full range of 0 to 100 and it appears that the areas with the highest populations with low access to food are found in the middle of the country from North Dakota down to Texas. When comparing higher rates of obesity, represented in darker hue of blue, to low access to food, we would assume that areas with a lighter hue would have easier access to food and therefore, a more likelihood of being obese. Although, the spatial scales are different, we can see that the food access data is lower towards the east, meaning that there would be a higher percent of accessibility. This then coincides with the obesity data being higher, particularly in the southeast, but also generally in the eastern part of the state.
+
+```{r foodaccess_data, include=FALSE}
 ######################
 #  Food Access Data  #
 ######################
@@ -347,6 +421,9 @@ food_data <- data.frame(FIPS = foodaccess$FIPS, State = foodaccess$State, County
 
 #joining geometry to health data by FIPS and GEOID
 food_map <- left_join(food_data, shape_data, by = c("FIPS" = "GEOID"))
+```
+
+```{r foodaccess_map, echo=FALSE}
 
 #Plotting map of low food access
 ggplot(data= food_map)+
@@ -359,6 +436,11 @@ ggplot(data= food_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food by County 2015")
 
+```
+
+Next, we wanted to look at the data based on the effect urban areas had on it. We chose to compare the states with the highest and lowest percent of obesity, which was West Virginia and Colorado respectively. Looking first at West Virginia, the scale of the data represented on the map only extends to 50%, meaning that this is the highest value for the percent of population with low access to food for the state, compared to the map of the continental U.S. which reached to 100%. Despite this difference in scale there does appear to be some patterns of higher percentage of populations with low access to food being away from the urban centers denoted in red. Comparing this to Colorado’s map, it is easier to see the same patterns, in that the areas with more than 75% of low access are away from the urban centers. There may be other factors, not represented in the data, leading these patterns to exist, such as the majority of these area in these counties being national parks and therefore have limited access to resources or inconsistent populations.
+
+```{r identifying_states, include=FALSE}
 ########################################################
 #  Mapping states to look at Urban vs. Rural
 # Identifying the states with the highest and lowest obesity rates
@@ -366,6 +448,9 @@ ggplot(data= food_map)+
 health %>% slice_max(PCT_OBESE_ADULTS17) #West Virginia
 health %>% slice_min(PCT_OBESE_ADULTS17) #Colorado
 
+```
+
+```{r urban_maps, echo=FALSE}
 #West Virginia Highest Obesity
 wv_map <- subset(food_map, State == "WV")
 wv_state <- subset(us_state, NAME == "West Virginia")
@@ -398,7 +483,11 @@ ggplot(data= co_map)+
   theme(panel.border = element_blank())+
   ggtitle("Percent of Low Access to Food for Colorado 2015")
 
+```
 
+To look at the patterns of low access to food being correlated with rural areas, we wanted to take a look a one other state that we would be more familiar with, Nebraska. Most people how live in Nebraska or have visited the state are well aware that the majority of the population is on the far eastern side, focused within Lincoln and Omaha, with a few smaller cities like Grand Island, Kearney, and North Platte sprinkled along the Platte River, and the rest of the population scattered about the state in very small communities. Looking at the red urban centers it is clear to see this illustration. Lincoln and Omaha stand out due to the area of the cluster polygon, and centers with at least 2,500 people are spread throughout the rest of the state. The counties with a high percentage of population with low access to food are clearly situated away from the urban centers, throughout the sandhills of central Nebraska with some other counties also being very north or very south of the state. 
+
+```{r nebraska_map, echo=FALSE}
 #Comparison to Nebraska
 ne_map <- subset(food_map, State == "NE")
 ne_state <- subset(us_state, NAME == "Nebraska")
@@ -417,10 +506,18 @@ ggplot(data= ne_map)+
 ```
 
 
-##Conclusion 
+## Conclusion 
 
-conclusion 
+When comparing the data collected on the rates of food insecurity, percentage of state populations experiencing low food access, the number of grocery stores available to local populations, and state population levels, it seems there is a clear correlation if not relationship between these factors. When local populations have fewer grocery stores available, this means they have less access to healthy food. This access is reflected in the high rates of low food access and food insecurity. 
+
+From the analysis of %Change in obesity (2012-2017) and %Change in recreational facilities available per thousand people in the same time period it was observed in plot that the states having high increase in Recreation facilities available to public had less increase in %change in obesity. This was also supported by the correlation factor calculated that came out to be negative as expected.
+
+Based on the data that was represented in the maps, there does appear to be a correlation between percent of the population with low access to food being in regions that are more rural and away from the urban centers. Also, when comparing obesity to food access, the areas with a higher rate of obesity were more directed to the eastern part of the country, which matched the areas showing a lower percentage of low access to food. Therefore, the east has an easier access to food and which is possibly contributing to their higher obesity.
+
+
+In conclusion, the Food Atlas data set is very beneficial in analyzing food accessibility and health trends in the United States. There is a wide range of variables that the Food Atlas covers and we only scratched the surface on. Exploring the data can be helpful to community leaders in order to understand and mitigate low access to food through food programs at school or for the community and number of stores. They may also draw conclusions on the amount of healthy food available and the health of the population to make positive changes for their future.
 
 ## References 
-
-list of references
+1) “Food Environment Atlas.” USDA ERS - Food Environment Atlas. U.S. Department of Agriculture. https://www.ers.usda.gov/data-products/food-environment-atlas/. 
+2) US Census Bureau. Census.gov. https://www.census.gov/. 
+3) Chobot, A., Górowska-Kowolik, K., Sokołowska, M., & Jarosz-Chobot, P. (2018). Obesity and diabetes-Not only a simple link between two epidemics. Diabetes/metabolism research and reviews, 34(7), e3042. https://doi.org/10.1002/dmrr.3042
