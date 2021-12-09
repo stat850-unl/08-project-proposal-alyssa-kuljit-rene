@@ -1,30 +1,29 @@
 ---
-title: "grubework"
+title: "Grube Analysis and Concluding Statements "
 author: "Alyssa Grube"
 date: "12/1/2021"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-t
-
-```{r}
 library(tidyverse)
 
 library(readxl)
 
-library(plyr)
+library(plyr) 
+
+library(ggplot2)
+
+library(sf)
+
+library(data.table)
 
 #read in data 
 #stores, access, insecurity 
 #overlay number of stores on the states 
-statecounty<-read.csv(file='foodenvatlas/StateAndCountyData.csv')
-supcounty<-read.csv(file='foodenvatlas/SupplementalDataCounty.csv')
-supstate<-read.csv(file='foodenvatlas/SupplementalDataState.csv')
-varlist<-read.csv(file='foodenvatlas/VariableList.csv')
 
 #SOURCE https://rpubs.com/tf_peterson/readxl_import 
 
@@ -39,32 +38,15 @@ dfstores<-read_excel("foodenvatlas/foodenvdata.xls", sheet="STORES") #sheet 6
 dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #sheet 9
 
 #food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
-```
-```{r}
-library(tidyverse)
 
-library(readxl)
 
-library(plyr)
-
-library(ggplot2)
-
-library(sf)
-
-library(data.table)
 
 #printing data into plots 
-#percent of access in 2015 
-
-#foodaccess<-sf::read_sf(dfaccess)
-
-#ggplot(data=foodaccess)+
-  #geom_sf()
-
-#need to plot pct poverty by county and state ; so need to find a way to automate the process 
+```
 
 
 
+```{r, echo=F, include=F}
 foodaccess<-dfaccess%>% 
 group_by(State) %>% #group by state 
   summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
@@ -109,15 +91,43 @@ matrixnumber<-matrix(c(storeaccess$number))
 combo<-cbind(alphpop15,alphstoreaccess$number)
 print(combo)
 
-completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number)
+alphaccess<-foodaccess[order(names(foodaccess))]
+
+completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
 print(completepic)
   
+
+
+
+```
+
+## Introduction 
+
+The Food Environment Atlas (FEA) was consulted to observe trends in the availability of food available to local communities. This is an online database that was formed and is updated with the goal of stimulating statistical research on food environment indicators. Specifically, the FEA studies local community's success at accessing healthy food by assembling spatial data on restaurant and grocery store proximity as well as local food assistance programs. 
+
+## Analysis 
+
+Grocery store proximity by state was first compared with the percent of the population with low access to healthy food, then to the percent of the population experiencing food insecurity, and finally compared to population levels in each state. 
+
+The below graph compares the number of grocery stores in each state to the percentage of the population with low access to healthy food. 
+
+
+```{r, echo=F, warning=F} 
 ggplot(data=foodaccess, aes(x=State,y=access))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
   theme_classic(base_size = 10)+
   ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
   xlab("State")+
   ylab("Percent of Population with Low Access to Food ")
+```
+
+States with a higher percentage of the population with low access to healthy food have lower numbers of grocery stores within their state borders. 
+
+This is a trend matched when comparing the number of grocery stores to the percentage of the state population experiencing food insecurity. The below graph depicts this relationship. 
+
+```{r, echo=F, warning=F} 
+
+
   
 ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   geom_label(aes(label=completepic$`alphstoreaccess$number`))+
@@ -125,8 +135,14 @@ ggplot(data=foodinsecure, aes(x=State,y=insecure))+
   ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
   xlab("State")+
   ylab("Percent of Population Experiencing Food Insecurity")
+```
 
-#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
+Higher rates of food insecurity are associated with lower numbers of available grocery stores. 
+
+The last comparison with the number of grocery stores in each state compared to the number of people living in those states. The below graph shows this relationship. 
+
+```{r, echo=F, warning=F} 
+
 ggplot(data=combo, aes(x=State, y=population15))+
  # geom_point() + 
  # geom_text(aes(label=matrixnumber)) +
@@ -136,147 +152,40 @@ ggplot(data=combo, aes(x=State, y=population15))+
   ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
   xlab("State")+
   ylab("Population Level in 2015")
- # geom_text(data=storeaccess, labels=storeaccess$number)
-#need to include geom formatting or it won't know what to do with the info 
-
-
-
 
 
 ```
 
 
-```{r}
-library(tidyverse)
+States with higher populations generally have a greater number of grocery stores. 
 
-library(readxl)
+In order to create a more direct comparison of the relationship between state population levels and the number of grocery stores with the levels of food access and insecurity, tables with the five highest and lowest access to food were made as a comparison. 
 
-library(plyr)
+First, a table of the five states with the highest percentage of low access to food was created, shown below. 
 
-library(ggplot2)
+```{r, echo=F, warning=F}
+names(completepic)[1]<-'Population' 
+names(completepic)[3]<-'Insecure' 
+names(completepic)[4]<-'Stores' 
+names(completepic)[5]<-'Low Access' 
+high<-completepic[1:4, 1:5] 
+low<-completepic[35:39,1:5]
+print(high)
 
-library(sf)
-
-library(data.table)
-#t
-#read in data 
-#stores, access, insecurity 
-#overlay number of stores on the states 
-statecounty<-read.csv(file='foodenvatlas/StateAndCountyData.csv')
-supcounty<-read.csv(file='foodenvatlas/SupplementalDataCounty.csv')
-supstate<-read.csv(file='foodenvatlas/SupplementalDataState.csv')
-varlist<-read.csv(file='foodenvatlas/VariableList.csv')
-
-#SOURCE https://rpubs.com/tf_peterson/readxl_import 
-
-fooddata<-read_excel("foodenvatlas/foodenvdata.xls") #read in excel file 
-
-excel_sheets(path="foodenvatlas/foodenvdata.xls") #return sheet names 
-#read in each sheet separately 
-dfaccess<-read_excel("foodenvatlas/foodenvdata.xls",sheet="ACCESS") #can also use sheet number instead of name ; this one is sheet 5 
-
-dfstores<-read_excel("foodenvatlas/foodenvdata.xls", sheet="STORES") #sheet 6 
-
-dfinsecurity<-read_excel("foodenvatlas/foodenvdata.xls",sheet="INSECURITY") #sheet 9
-
-#food availability and child malnourishment rates so not all of these dfs are necessary; delete unnecessary ones 
-
-#printing data into plots 
-#percent of access in 2015 
-
-#foodaccess<-sf::read_sf(dfaccess)
-
-#ggplot(data=foodaccess)+
-  #geom_sf()
-
-#need to plot pct poverty by county and state ; so need to find a way to automate the process 
-
-
-
-foodaccess<-dfaccess%>% 
-group_by(State) %>% #group by state 
-  summarise_at(vars(PCT_LACCESS_POP15), list(access=mean))%>% #sum % low access by state and find average access percent of the population 
-  arrange(desc(access))#arrange the tibble in descending order by average percent access to food 
-  #mutate(dfaccess$LACCESS_POP15)
-
-alphaccess<-foodaccess[order(names(foodaccess))]
-
-pop15<-dfaccess%>%
-  group_by(State)%>%
-  summarise_at(vars(LACCESS_POP15), list(population15=sum))
-
-alphpop15<-pop15[order(names(pop15))] #list in alphabetical order by state for labeling purposes 
-
-#print(pop15)
-
-#print(foodaccess)
-
-foodinsecure<-dfinsecurity %>% 
-  group_by(State) %>% 
-  summarise_at(vars(FOODINSEC_12_14), list(insecure=mean))%>%
-  arrange(desc(insecure))
-
-alphfoodinsecure<-foodinsecure[order(names(foodinsecure))]
-
-#print(foodinsecure) 
-
-
-storeaccess<-dfstores%>%
-  group_by(State) %>% 
-  summarize_at(vars(GROC16), list(number=sum)) %>% 
-    arrange(number) #ascending order is default; modify with desc() 
-
-#need number of grocery stores to be in ascending order by state as fewer stores means less access to food 
-
-
-alphstoreaccess<-storeaccess[order(names(storeaccess))]
-
-#print(storeaccess)
-
-matrixnumber<-matrix(c(storeaccess$number))
-#alphmn<-matrixnumber[order(names(matrixnumber))]
-
-combo<-cbind(alphpop15,alphstoreaccess$number)
-#print(combo)
-
-completepic<-cbind(alphpop15,alphfoodinsecure$insecure,alphstoreaccess$number, alphaccess$access)
-print(completepic)
-  
-
-
-jpeg("Images/foodaccessplot.jpg") 
-foodaccessplot<-ggplot(data=foodaccess, aes(x=State,y=access))+
-  geom_label(aes(label=completepic$`alphstoreaccess$number`), size=2)+
-  theme_classic(base_size = 10)+
-  ggtitle("Percent of Population with Low Access to Grocery Stores in 2015 by State")+
-  xlab("State")+
-  ylab("Percent of Population with Low Access to Food ")
-
-
-dev.off()
-  
-foodinsecureplot<-ggplot(data=foodinsecure, aes(x=State,y=insecure))+
-  geom_label(aes(label=completepic$`alphstoreaccess$number`))+
-  theme_classic(base_size = 10)+
-  ggtitle("Comparing Food Insecurity with the Number of Grocery Stores Available by State in 2017 ")+
-  xlab("State")+
-  ylab("Percent of Population Experiencing Food Insecurity")
-jpeg("Images/foodinsecureplot.jpg")
-dev.off()
-
-#see if you can change this plot to be state vs ave population, then each data point is the average number of grocery stores in that state 
-grocplot<-ggplot(data=combo, aes(x=State, y=population15))+
- # geom_point() + 
- # geom_text(aes(label=matrixnumber)) +
-  geom_label(aes(label=alphstoreaccess$number), size=2)+
-  #geom_text(size=10)+
-  theme_classic(base_size = 10)+
-  ggtitle("Comparing Number of Grocery Stores to State Population Levels in 2015")+
-  xlab("State")+
-  ylab("Population Level in 2015")
-jpeg("Images/grocplot.jpg")
-dev.off()
- # geom_text(data=storeaccess, labels=storeaccess$number)
-#need to include geom formatting or it won't know what to do with the info 
 ```
-Fewer grocery stores increases food insecurity. 
+
+These states have a not inconsiderable population level and the lowest numbers of available grocery stores. When observing their rates of low food access and insecurity, they have the highest rates for both. 
+
+Lastly, a table of the five states with the lowest percentage of low access to food was created, shown below. 
+
+```{r, echo=F}
+print(low)
+```
+
+These states have higher population levels, but also have the most grocery stores available to local populations. These numbers also correlate with much lower rates of food insecurity and low food access. 
+
+## Concluding Statements 
+
+From comparing the data collected on the rates of food insecurity, percentage of state populations experiencing low food access, the number of grocery stores available to local populations, and state population levels, it seems there is a clear correlation if not relationship between these factors. 
+
+When local populations have fewer grocery stores available, this means they have less access to healthy food. This access is reflected in the hogh rates of low food access and food insecurity. 
